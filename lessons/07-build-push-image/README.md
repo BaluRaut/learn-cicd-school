@@ -63,6 +63,13 @@ commit  abc1234ef56…  (40 chars — git's fingerprint of the code)
    └─ ON the label:    hello-courier:abc1234ef56…     (full SHA — what you deploy by)
 ```
 
+**Tag vs digest.** The commit-SHA tag tells us which source revision produced the image;
+the image **digest** (`sha256:…`, shown by `docker image inspect` and in the ECR console)
+identifies the exact immutable image bytes. Build the same commit twice and you get one tag
+but possibly two digests — the tag is the address, the digest is the identity, as the
+[Docker school's lesson 11](https://baluraut.github.io/learn-docker-school/lesson-diagrams.html#l11)
+puts it. Lesson 12 pins base images by digest for the same reason.
+
 ## 🤔 Why
 
 Without the version baked in, "which version is running?" is a guess. Without the smoke test, a Dockerfile
