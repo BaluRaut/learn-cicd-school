@@ -1,0 +1,15 @@
+{
+  "_comment": "WHO may wear the CI hat (lesson 06): only GitHub Actions runs of THIS repo's main branch. Create the OIDC provider once: aws iam create-open-id-connect-provider --url https://token.actions.githubusercontent.com --client-id-list sts.amazonaws.com",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com" },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": { "token.actions.githubusercontent.com:aud": "sts.amazonaws.com" },
+        "StringLike":   { "token.actions.githubusercontent.com:sub": "repo:BaluRaut/learn-cicd-school:ref:refs/heads/main" }
+      }
+    }
+  ]
+}

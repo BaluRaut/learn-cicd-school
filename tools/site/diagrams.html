@@ -1,0 +1,494 @@
+<!-- 01 -->
+<section class="dsec" id="l01" style="--c:#16a34a">
+<h2><span class="ln">1</span> 📮 Why CI/CD — the homework pile-up</h2>
+<p class="d">Small submissions checked the day they arrive beat one giant merge at term end; the pipeline is the conveyor that checks, copies and delivers.</p>
+<svg aria-label="A term-end pile of forty homeworks merged on the last day contrasted with a mailroom conveyor that checks, copies and delivers every git push the day it arrives" role="img" viewbox="0 0 940 300">
+<rect class="dead" height="100" rx="12" width="240" x="40" y="70"></rect>
+<text class="t m" x="160" y="102">💥 term-end pile-up</text>
+<text class="s m" x="160" y="128">40 homeworks merged on the last day</text>
+<text class="s m" x="160" y="150">nothing fits — integration hell</text>
+<g transform="translate(40,70)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<text class="s m" x="305" y="125">vs</text>
+<rect class="soft" height="150" rx="14" width="590" x="330" y="40"></rect>
+<text class="t m" x="625" y="68">📮 the mailroom conveyor — every submission, the day it arrives</text>
+<rect class="box" height="80" rx="10" width="110" x="350" y="88"></rect>
+<text class="t m" x="405" y="118">git push</text>
+<text class="s m" x="405" y="142">the submission</text>
+<rect class="box" height="80" rx="10" width="110" x="500" y="88"></rect>
+<text class="t m" x="555" y="118">✅ check</text>
+<text class="s m" x="555" y="142">node --test</text>
+<g transform="translate(500,88)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="box" height="80" rx="10" width="110" x="650" y="88"></rect>
+<text class="t m" x="705" y="118">📦 copy</text>
+<text class="s m" x="705" y="142">docker build</text>
+<g transform="translate(650,88)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="box" height="80" rx="10" width="110" x="800" y="88"></rect>
+<text class="t m" x="855" y="118">🚚 deliver</text>
+<text class="s m" x="855" y="142">kubectl apply</text>
+<g transform="translate(800,88)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<line class="arr" x1="460" x2="496" y1="128" y2="128"></line>
+<line class="arr" x1="610" x2="646" y1="128" y2="128"></line>
+<line class="arr" x1="760" x2="796" y1="128" y2="128"></line>
+<text class="s m" x="625" y="182">small commits, checked one at a time — nothing piles up</text>
+<rect class="soft" height="70" rx="12" width="880" x="40" y="215"></rect>
+<text class="s m" x="480" y="242">CI = check every submission the day it arrives · continuous delivery = a checked copy is always ready to send</text>
+<text class="s m" x="480" y="266">continuous deployment = it is sent automatically · Docker packs the lunchbox, Kubernetes runs it, this course MOVES it</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-01-why-cicd/lessons/01-why-cicd/README.md">Read full lesson 01 →</a></p>
+</section>
+<!-- 02 -->
+<section class="dsec" id="l02" style="--c:#16a34a">
+<h2><span class="ln">2</span> 🧩 Anatomy of a pipeline — the bell, the desks, the clerks</h2>
+<p class="d">A bell rings (trigger), a clerk (runner) sits at a desk (job) and works through its tasks (steps) — with a drawer, envelopes, a safe and a locked door on the side.</p>
+<svg aria-label="A push or pull request triggers a run; an ubuntu-latest runner hosts the test job whose steps run in order; cache, artifact, secrets and environment sit beside it; a strip maps the vocabulary of the four CI dialects" role="img" viewbox="0 0 940 330">
+<rect class="box" height="90" rx="12" width="140" x="30" y="50"></rect>
+<text class="t m" x="100" y="80">🔔 trigger</text>
+<text class="s m" x="100" y="104">on: push</text>
+<text class="s m" x="100" y="124">on: pull_request</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="170" x2="206" y1="95" y2="95"></line>
+<rect class="box" height="190" rx="14" width="440" x="210" y="40"></rect>
+<text class="t m" x="430" y="66">🧑‍💼 runner: ubuntu-latest — a fresh clerk for each job</text>
+<g transform="translate(210,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="135" rx="10" width="400" x="230" y="80"></rect>
+<text class="t m" x="430" y="104">🗂️ job: test (node 22) — one desk</text>
+<text class="s m" x="430" y="130">steps = the tasks done at that desk, in order:</text>
+<text class="s m" x="430" y="152">📥 checkout → 🟢 setup-node → 🗄️ cache → ⏳ prepare</text>
+<text class="s m" x="430" y="174">→ 🧪 node --test → 📎 upload-artifact (report card)</text>
+<text class="s m" x="430" y="200">run: = a shell command · uses: = a ready-made step</text>
+<g transform="translate(230,80)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="650" x2="691" y1="60" y2="60"></line>
+<line class="arr" x1="650" x2="691" y1="110" y2="110"></line>
+<line class="arr" x1="650" x2="691" y1="160" y2="160"></line>
+<line class="arr" x1="650" x2="691" y1="210" y2="210"></line>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="40"></rect>
+<text class="s m" x="807" y="65">🗄️ cache — the drawer (may vanish)</text>
+<g transform="translate(695,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="90"></rect>
+<text class="s m" x="807" y="115">📎 artifact — the envelope (kept)</text>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="140"></rect>
+<text class="s m" x="807" y="165">🔐 secrets — masked in the logs</text>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="190"></rect>
+<text class="s m" x="807" y="215">🛑 environment — the approval gate</text>
+<rect class="soft" height="68" rx="12" width="890" x="30" y="250"></rect>
+<text class="s m" x="475" y="274">🗣️ same words, four dialects — GitHub Actions: workflow · job · step · runner · CircleCI: workflow · job · step · executor</text>
+<text class="s m" x="475" y="298">GitLab CI: pipeline · stage · job · runner · Jenkins: pipeline · stage · step · agent</text>
+<g transform="translate(30,250)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-02-pipeline-anatomy/lessons/02-pipeline-anatomy/README.md">Read full lesson 02 →</a></p>
+</section>
+<!-- 03 -->
+<section class="dsec" id="l03" style="--c:#16a34a">
+<h2><span class="ln">3</span> ✅ Your first pipeline — green check on every push</h2>
+<p class="d">Fork, push, watch the checking desk stamp ✅ or ❌ on the commit — and learn to read the log when it's red.</p>
+<svg aria-label="A push from your fork starts one run with three parallel test jobs on node 20, 22 and 24 that end in a green check on the commit, or a red one you fix and push again" role="img" viewbox="0 0 940 300">
+<rect class="box" height="90" rx="12" width="170" x="30" y="100"></rect>
+<text class="t m" x="115" y="132">🧑‍🎓 your fork</text>
+<text class="s m" x="115" y="156">git push</text>
+<text class="s m" x="115" y="176">a new submission</text>
+<g transform="translate(30,100)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="200" x2="236" y1="145" y2="145"></line>
+<rect class="box" height="220" rx="14" width="380" x="240" y="40"></rect>
+<text class="t m" x="430" y="68">📮 a run of ✅ ci — one run per push</text>
+<g transform="translate(240,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="100" rx="10" width="105" x="262" y="88"></rect>
+<text class="t m" x="314" y="112">node 20</text>
+<text class="s m" x="314" y="136">📥 checkout</text>
+<text class="s m" x="314" y="156">⏳ prepare</text>
+<text class="s m" x="314" y="176">🧪 node --test</text>
+<rect class="soft" height="100" rx="10" width="105" x="377" y="88"></rect>
+<text class="t m" x="429" y="112">node 22</text>
+<text class="s m" x="429" y="136">📥 checkout</text>
+<text class="s m" x="429" y="156">⏳ prepare</text>
+<text class="s m" x="429" y="176">🧪 node --test</text>
+<rect class="soft" height="100" rx="10" width="105" x="492" y="88"></rect>
+<text class="t m" x="544" y="112">node 24</text>
+<text class="s m" x="544" y="136">📥 checkout</text>
+<text class="s m" x="544" y="156">⏳ prepare</text>
+<text class="s m" x="544" y="176">🧪 node --test</text>
+<text class="s m" x="430" y="215">three desks at once — the same commit, three rulers 📏</text>
+<text class="s m" x="430" y="238">concurrency: a newer push cancels the older run</text>
+<line class="arr" x1="620" x2="656" y1="120" y2="120"></line>
+<rect class="box" height="80" rx="12" width="250" x="660" y="80"></rect>
+<text class="t m" x="785" y="110">✅ green check on the commit</text>
+<text class="s m" x="785" y="134">all three jobs passed</text>
+<g transform="translate(660,80)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr dash" x1="620" x2="656" y1="220" y2="220"></line>
+<rect class="dead" height="80" rx="12" width="250" x="660" y="180"></rect>
+<text class="t m" x="785" y="208">❌ red check</text>
+<text class="s m" x="785" y="232">read the log, fix, push again</text>
+<text class="s m" x="785" y="252">→ a new run; nobody is blocked</text>
+<g transform="translate(660,180)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<text class="s m" x="470" y="285">pull request = the same check runs BEFORE the merge · gh run watch / gh run view --log follow it from the terminal</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-03-first-pipeline/lessons/03-first-pipeline/README.md">Read full lesson 03 →</a></p>
+</section>
+<!-- 04 -->
+<section class="dsec" id="l04" style="--c:#16a34a">
+<h2><span class="ln">4</span> ⚡ Fast pipelines — cache, parallel jobs, matrix</h2>
+<p class="d">Key the drawer by the file that defines the work; run the three rulers side by side; let all of them finish.</p>
+<svg aria-label="A cache key hashed from app/prepare.js opens a drawer that either restores prepared/ instantly or makes node prepare.js pay the hash rounds; the matrix runs node 20, 22 and 24 in parallel with fail-fast off" role="img" viewbox="0 0 940 300">
+<rect class="box" height="110" rx="12" width="250" x="30" y="60"></rect>
+<text class="t m" x="155" y="92">🔑 the cache key</text>
+<text class="s m" x="155" y="118">prepared-&lt;hash of app/prepare.js&gt;</text>
+<text class="s m" x="155" y="138">hashFiles(): same file → same key</text>
+<text class="s m" x="155" y="158">edit prepare.js → new key → a miss</text>
+<g transform="translate(30,60)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="280" x2="316" y1="115" y2="115"></line>
+<rect class="box" height="170" rx="14" width="300" x="320" y="40"></rect>
+<text class="t m" x="470" y="68">🗄️ the drawer — actions/cache@v4</text>
+<g transform="translate(320,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="52" rx="8" width="270" x="335" y="82"></rect>
+<text class="s m" x="470" y="102">⚡ HIT — prepared/ restored, step skipped</text>
+<text class="s m" x="470" y="122">"already exists — nothing to do" · ~1 s</text>
+<rect class="soft" height="52" rx="8" width="270" x="335" y="144"></rect>
+<text class="s m" x="470" y="164">⏳ MISS — node prepare.js: 12,000,000</text>
+<text class="s m" x="470" y="184">hash rounds · ~8–10 s on a runner</text>
+<line class="arr" x1="620" x2="656" y1="125" y2="125"></line>
+<rect class="box" height="170" rx="14" width="250" x="660" y="40"></rect>
+<text class="t m" x="785" y="68">📏📏📏 matrix — three rulers</text>
+<g transform="translate(660,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="soft" height="40" rx="8" width="68" x="680" y="84"></rect>
+<text class="s m" x="714" y="108">node 20</text>
+<rect class="soft" height="40" rx="8" width="68" x="758" y="84"></rect>
+<text class="s m" x="792" y="108">node 22</text>
+<rect class="soft" height="40" rx="8" width="68" x="836" y="84"></rect>
+<text class="s m" x="870" y="108">node 24</text>
+<text class="s m" x="785" y="150">three jobs at once, same steps</text>
+<text class="s m" x="785" y="170">fail-fast: false → all three finish</text>
+<text class="s m" x="785" y="190">even when one goes red</text>
+<rect class="soft" height="56" rx="12" width="880" x="30" y="232"></rect>
+<text class="s m" x="470" y="255">cache what is slow to MAKE but cheap to check (prepared/, node_modules) — not build outputs, not secrets</text>
+<text class="s m" x="470" y="276">changing prepare.js → new hash → new key → one honest MISS, then hits again · Docker layer cache = Docker school L02</text>
+<g transform="translate(30,232)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-04-cache-parallel-matrix/lessons/04-cache-parallel-matrix/README.md">Read full lesson 04 →</a></p>
+</section>
+<!-- 05 -->
+<section class="dsec" id="l05" style="--c:#16a34a">
+<h2><span class="ln">5</span> 📎 Artifacts &amp; test reports — what travels between desks</h2>
+<p class="d">A cache speeds a job up and may vanish; an artifact is a named envelope that carries results — an image, a report card — from one desk to the next.</p>
+<svg aria-label="The build job on machine A uploads image.tar.gz as an artifact, the push job on machine B downloads it; the JUnit report card is uploaded even when tests fail; a box contrasts cache and artifact" role="img" viewbox="0 0 940 300">
+<rect class="box" height="110" rx="12" width="250" x="30" y="50"></rect>
+<text class="t m" x="155" y="80">🍱 build job — machine A</text>
+<text class="s m" x="155" y="104">docker build → hello-courier:&lt;sha&gt;</text>
+<text class="s m" x="155" y="124">docker save | gzip &gt; image.tar.gz</text>
+<text class="s m" x="155" y="144">upload-artifact: name: image</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="280" x2="316" y1="105" y2="105"></line>
+<rect class="box" height="90" rx="12" width="200" x="320" y="60"></rect>
+<text class="t m" x="420" y="90">📎 the envelope</text>
+<text class="s m" x="420" y="112">image.tar.gz</text>
+<text class="s m" x="420" y="132">retention-days: 1</text>
+<g transform="translate(320,60)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="520" x2="556" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="260" x="560" y="50"></rect>
+<text class="t m" x="690" y="80">📦 push job — machine B</text>
+<text class="s m" x="690" y="104">download-artifact: name: image</text>
+<text class="s m" x="690" y="124">docker load &lt; image.tar.gz</text>
+<text class="s m" x="690" y="144">→ tag + push (lesson 07)</text>
+<g transform="translate(560,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr dash" x1="820" x2="856" y1="105" y2="105"></line>
+<text class="s m" x="885" y="100">🏦 ECR</text>
+<text class="s m" x="885" y="118">hello-courier</text>
+<rect class="box" height="90" rx="12" width="390" x="30" y="190"></rect>
+<text class="t m" x="225" y="218">📋 the report card — test-results.xml</text>
+<text class="s m" x="225" y="242">node --test --test-reporter=junit</text>
+<text class="s m" x="225" y="262">upload if: always() — most useful when tests FAIL</text>
+<g transform="translate(30,190)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="90" rx="12" width="460" x="450" y="190"></rect>
+<text class="t m" x="680" y="218">🗄️ cache vs 📎 artifact</text>
+<text class="s m" x="680" y="242">cache = the drawer: keyed by content, may vanish, only speeds up</text>
+<text class="s m" x="680" y="262">artifact = the envelope: named, kept N days, travels between jobs</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-05-artifacts-reports/lessons/05-artifacts-reports/README.md">Read full lesson 05 →</a></p>
+</section>
+<!-- 06 -->
+<section class="dsec" id="l06" style="--c:#16a34a">
+<h2><span class="ln">6</span> 🪪 Secrets &amp; least privilege — the courier's badge</h2>
+<p class="d">Show a signed badge, get a day pass that expires: no AWS keys in the courier's pocket, and the pass opens only the doors this repo needs.</p>
+<svg aria-label="The push job asks GitHub for a signed OIDC badge, configure-aws-credentials shows it to AWS STS which checks the trust policy's aud and sub, and hands back temporary credentials limited to ECR push and EKS describe; a dashed box shows the bad alternative of long-lived keys" role="img" viewbox="0 0 940 300">
+<rect class="box" height="100" rx="12" width="220" x="30" y="40"></rect>
+<text class="t m" x="140" y="70">📮 the push job</text>
+<text class="s m" x="140" y="94">permissions: id-token: write</text>
+<text class="s m" x="140" y="114">asks GitHub for a signed 🪪 badge</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="250" x2="286" y1="90" y2="90"></line>
+<rect class="box" height="100" rx="12" width="230" x="290" y="40"></rect>
+<text class="t m" x="405" y="70">🪪 configure-aws-credentials</text>
+<text class="s m" x="405" y="94">role-to-assume: vars.AWS_ROLE_ARN</text>
+<text class="s m" x="405" y="114">shows the badge to AWS STS</text>
+<g transform="translate(290,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="520" x2="556" y1="90" y2="90"></line>
+<rect class="box" height="125" rx="14" width="350" x="560" y="30"></rect>
+<text class="t m" x="735" y="56">☁️ AWS STS reads the trust policy</text>
+<text class="s m" x="735" y="80">aud = sts.amazonaws.com</text>
+<text class="s m" x="735" y="100">sub = repo:BaluRaut/learn-cicd-school:</text>
+<text class="s m" x="735" y="120">ref:refs/heads/main — only THIS repo's main</text>
+<text class="s m" x="735" y="140">(iam/github-oidc-trust-policy.json)</text>
+<g transform="translate(560,30)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="735" x2="735" y1="155" y2="186"></line>
+<rect class="box" height="100" rx="12" width="350" x="560" y="190"></rect>
+<text class="t m" x="735" y="218">🎫 the day pass — temporary credentials</text>
+<text class="s m" x="735" y="242">expire in about an hour · stored nowhere</text>
+<text class="s m" x="735" y="262">may do ONLY: ecr push to hello-courier + eks describe</text>
+<text class="s m" x="735" y="282">school-eks (iam/ci-role-policy.json)</text>
+<g transform="translate(560,190)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="dead" height="100" rx="12" width="490" x="30" y="190"></rect>
+<text class="t m" x="275" y="218">🔑 long-lived keys in secrets — the master key</text>
+<text class="s m" x="275" y="242">a stored AWS_ACCESS_KEY_ID = the master key in the courier's pocket</text>
+<text class="s m" x="275" y="262">it never expires, works from anywhere, and masking only hides it in logs</text>
+<text class="s m" x="275" y="282">prefer the badge: nothing to leak, nothing to rotate</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-06-secrets-oidc/lessons/06-secrets-oidc/README.md">Read full lesson 06 →</a></p>
+</section>
+<!-- 07 -->
+<section class="dsec" id="l07" style="--c:#d97706">
+<h2><span class="ln">7</span> 📦 Build &amp; push the image — the photocopier</h2>
+<p class="d">Photocopy the checked homework, prove the copy runs, label it with the commit's fingerprint, file it in the locker.</p>
+<svg aria-label="docker build with the short SHA as APP_VERSION, a smoke test that runs the box and curls /healthz, a tag equal to the full commit SHA, and a push to the hello-courier ECR repository that scans on push" role="img" viewbox="0 0 940 300">
+<rect class="box" height="135" rx="12" width="190" x="30" y="50"></rect>
+<text class="t m" x="125" y="80">🍱 the photocopier</text>
+<text class="s m" x="125" y="104">docker build app</text>
+<text class="s m" x="125" y="124">--build-arg</text>
+<text class="s m" x="125" y="144">APP_VERSION=${GITHUB_SHA::7}</text>
+<text class="s m" x="125" y="164">-t hello-courier:&lt;full sha&gt;</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="220" x2="256" y1="118" y2="118"></line>
+<rect class="box" height="135" rx="12" width="190" x="260" y="50"></rect>
+<text class="t m" x="355" y="80">🧪 smoke-test the BOX</text>
+<text class="s m" x="355" y="104">docker run -d -p 3000:3000</text>
+<text class="s m" x="355" y="124">curl localhost:3000/healthz</text>
+<text class="s m" x="355" y="144">grep "version &lt;short sha&gt;"</text>
+<text class="s m" x="355" y="164">docker stop smoke</text>
+<g transform="translate(260,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="450" x2="486" y1="118" y2="118"></line>
+<rect class="box" height="135" rx="12" width="190" x="490" y="50"></rect>
+<text class="t m" x="585" y="80">🏷️ label the copy</text>
+<text class="s m" x="585" y="104">tag = the FULL commit SHA</text>
+<text class="s m" x="585" y="124">one tag ↔ one commit</text>
+<text class="s m" x="585" y="144">docker save → 📎 image.tar.gz</text>
+<text class="s m" x="585" y="164">(one run, two machines)</text>
+<g transform="translate(490,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="680" x2="716" y1="118" y2="118"></line>
+<rect class="box" height="135" rx="12" width="190" x="720" y="50"></rect>
+<text class="t m" x="815" y="80">🏦 the locker — ECR</text>
+<text class="s m" x="815" y="104">amazon-ecr-login@v2 → 🎫</text>
+<text class="s m" x="815" y="124">docker push (hello-courier)</text>
+<text class="s m" x="815" y="144">🛡️ scan on push (Docker L12)</text>
+<text class="s m" x="815" y="164">outputs.image → the van 🚚</text>
+<g transform="translate(720,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="70" rx="12" width="880" x="30" y="215"></rect>
+<text class="t m" x="470" y="241">🏷️ the tag IS the version</text>
+<text class="s m" x="470" y="266">no :latest — yesterday's SHA stays in the locker, so rollback = redeploy that tag (lesson 09) · version label inside = short SHA</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-07-build-push-image/lessons/07-build-push-image/README.md">Read full lesson 07 →</a></p>
+</section>
+<!-- 08 -->
+<section class="dsec" id="l08" style="--c:#d97706">
+<h2><span class="ln">8</span> 🛑 Environments &amp; approval gates — the principal's signature</h2>
+<p class="d">Pin the notice on the practice board first; a named person signs before it reaches the main board — and every signature is logged.</p>
+<svg aria-label="A push to main deploys to the staging environment, then the production environment's required reviewers pause the run until a person clicks Approve, then production deploys; side boxes show branch protection and the same gate in CircleCI, GitLab and Jenkins" role="img" viewbox="0 0 940 300">
+<rect class="box" height="110" rx="12" width="170" x="30" y="50"></rect>
+<text class="t m" x="115" y="82">🌿 main</text>
+<text class="s m" x="115" y="106">push → 📦 ship.yml</text>
+<text class="s m" x="115" y="126">test → build → push</text>
+<text class="s m" x="115" y="146">→ 🚚 deploy.yml</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="200" x2="236" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="200" x="240" y="50"></rect>
+<text class="t m" x="340" y="82">📌 the practice board</text>
+<text class="s m" x="340" y="106">environment: staging</text>
+<text class="s m" x="340" y="126">kubectl apply -n staging</text>
+<text class="s m" x="340" y="146">in-cluster curl /healthz</text>
+<g transform="translate(240,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="440" x2="476" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="210" x="480" y="50"></rect>
+<text class="t m" x="585" y="82">🛑 the principal signs</text>
+<text class="s m" x="585" y="106">environment: production</text>
+<text class="s m" x="585" y="126">required reviewers: a named</text>
+<text class="s m" x="585" y="146">person clicks Approve (logged)</text>
+<g transform="translate(480,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="690" x2="726" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="180" x="730" y="50"></rect>
+<text class="t m" x="820" y="82">📌 the main board</text>
+<text class="s m" x="820" y="106">environment: production</text>
+<text class="s m" x="820" y="126">kubectl apply -n production</text>
+<text class="s m" x="820" y="146">rollout status = done</text>
+<g transform="translate(730,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="90" rx="12" width="420" x="30" y="190"></rect>
+<text class="t m" x="240" y="218">🔒 before the van even leaves</text>
+<text class="s m" x="240" y="242">branch protection on main: changes arrive by pull request,</text>
+<text class="s m" x="240" y="262">required status check "test (node 22)" must be green first</text>
+<g transform="translate(30,190)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<rect class="soft" height="90" rx="12" width="460" x="450" y="190"></rect>
+<text class="t m" x="680" y="218">🗣️ the same gate in four dialects</text>
+<text class="s m" x="680" y="242">CircleCI: hold-for-approval · type: approval — GitLab: when: manual</text>
+<text class="s m" x="680" y="262">Jenkins: input message: 'Deploy to production?' — audit: who, when</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-08-environments-gates/lessons/08-environments-gates/README.md">Read full lesson 08 →</a></p>
+</section>
+<!-- 09 -->
+<section class="dsec" id="l09" style="--c:#d97706">
+<h2><span class="ln">9</span> 🔁 Deploy strategies &amp; rollback — replace the pins one by one</h2>
+<p class="d">Four ways to swap the notice on the board, and the boring, reliable way to put yesterday's back.</p>
+<svg aria-label="Four strategies side by side: rolling with maxSurge 1 and maxUnavailable 0 gated by the /healthz readiness probe, recreate, blue/green flipping the Service selector, and canary; below, rollback by re-running with yesterday's SHA or rollout undo" role="img" viewbox="0 0 940 300">
+<rect class="box" height="140" rx="12" width="205" x="30" y="40"></rect>
+<text class="t m" x="132" y="70">🔁 rolling — this repo</text>
+<text class="s m" x="132" y="94">replace the pins one by one</text>
+<text class="s m" x="132" y="116">maxSurge: 1 · maxUnavailable: 0</text>
+<text class="s m" x="132" y="136">readinessProbe /healthz gates</text>
+<text class="s m" x="132" y="156">each new pod · no planned downtime</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<rect class="box" height="140" rx="12" width="205" x="255" y="40"></rect>
+<text class="t m" x="357" y="70">🔄 recreate</text>
+<text class="s m" x="357" y="94">take every pin down, then</text>
+<text class="s m" x="357" y="116">put the new ones up</text>
+<text class="s m" x="357" y="136">a short downtime — fine for</text>
+<text class="s m" x="357" y="156">jobs, dev, single-writer DBs</text>
+<g transform="translate(255,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="box" height="140" rx="12" width="205" x="480" y="40"></rect>
+<text class="t m" x="582" y="70">🔵🟢 blue/green</text>
+<text class="s m" x="582" y="94">two Deployments, one is live</text>
+<text class="s m" x="582" y="116">flip the Service selector</text>
+<text class="s m" x="582" y="136">switching back is instant</text>
+<text class="s m" x="582" y="156">costs 2× while both run</text>
+<g transform="translate(480,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="box" height="140" rx="12" width="205" x="705" y="40"></rect>
+<text class="t m" x="807" y="70">🐤 canary</text>
+<text class="s m" x="807" y="94">show the new notice to</text>
+<text class="s m" x="807" y="116">one class first</text>
+<text class="s m" x="807" y="136">small share → watch → widen</text>
+<text class="s m" x="807" y="156">Route 53 weighted = AWS L23</text>
+<g transform="translate(705,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<line class="arr dash" x1="132" x2="132" y1="214" y2="184"></line>
+<rect class="soft" height="70" rx="12" width="440" x="30" y="218"></rect>
+<text class="t m" x="250" y="244">⏪ rollback — put yesterday's notice back</text>
+<text class="s m" x="250" y="268">re-run deploy with yesterday's SHA (preferred) · or: rollout undo</text>
+<g transform="translate(30,218)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<rect class="soft" height="70" rx="12" width="410" x="500" y="218"></rect>
+<text class="t m" x="705" y="244">🚦 deploy ≠ release</text>
+<text class="s m" x="705" y="268">feature flags turn it on later · DB: expand → deploy → contract</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-09-deploy-strategies/lessons/09-deploy-strategies/README.md">Read full lesson 09 →</a></p>
+</section>
+<!-- 10 -->
+<section class="dsec" id="l10" style="--c:#d97706">
+<h2><span class="ln">10</span> 🚚 Deploy to Kubernetes from CI — the delivery van</h2>
+<p class="d">The van drives to school with a day pass, writes the image into the manifest, pins it, and waits until the new notice is readable.</p>
+<svg aria-label="deploy.yml step by step: OIDC day pass, aws eks update-kubeconfig for school-eks, sed replaces IMAGE_PLACEHOLDER, kubectl apply into the staging namespace, rollout status as the gate and an in-cluster curl of /healthz; a dashed note warns that nobody watches the board after the van leaves" role="img" viewbox="0 0 940 330">
+<rect class="box" height="280" rx="14" width="560" x="30" y="40"></rect>
+<text class="t m" x="310" y="66">🚚 deploy.yml — the van (push model: CI holds cluster access)</text>
+<g transform="translate(48,92)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<text class="s" x="70" y="96">🪪 configure-aws-credentials → the day pass (role-to-assume: vars.AWS_ROLE_ARN)</text>
+<g transform="translate(48,120)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<text class="s" x="70" y="124">🗺️ aws eks update-kubeconfig --name school-eks → kubectl now knows the school</text>
+<g transform="translate(48,148)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<text class="s" x="70" y="152">✏️ sed IMAGE_PLACEHOLDER → …/hello-courier:&lt;sha&gt; in k8s/deployment.yaml</text>
+<g transform="translate(48,176)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<text class="s" x="70" y="180">📌 kubectl apply -n staging -f k8s/ — one namespace per environment</text>
+<g transform="translate(48,204)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<text class="s" x="70" y="208">⏳ kubectl rollout status deployment/hello-courier --timeout=180s — the gate</text>
+<text class="s" x="70" y="236">↳ 🧪 smoke from inside: kubectl run smoke --image=curlimages/curl → /healthz</text>
+<text class="s m" x="310" y="270">nicer than sed: kustomize edit set image · helm --set image.tag=&lt;sha&gt;</text>
+<text class="s m" x="310" y="294">production repeats the same steps after the principal signs (lesson 08)</text>
+<line class="arr" x1="590" x2="626" y1="95" y2="95"></line>
+<rect class="soft" height="110" rx="12" width="280" x="630" y="40"></rect>
+<text class="t m" x="770" y="68">📌 the notice board</text>
+<text class="s m" x="770" y="92">Deployment hello-courier · 2 replicas</text>
+<text class="s m" x="770" y="112">readinessProbe /healthz decides when a</text>
+<text class="s m" x="770" y="132">new pin counts as readable (K8s L07)</text>
+<line class="arr dash" x1="590" x2="626" y1="255" y2="255"></line>
+<rect class="dead" height="130" rx="12" width="280" x="630" y="190"></rect>
+<text class="t m" x="770" y="220">🚧 after the van drives away…</text>
+<text class="s m" x="770" y="246">nobody watches the board — a manual</text>
+<text class="s m" x="770" y="268">kubectl edit drifts silently and the</text>
+<text class="s m" x="770" y="290">push model can't see it → ArgoCD L04</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-10-deploy-to-kubernetes/lessons/10-deploy-to-kubernetes/README.md">Read full lesson 10 →</a></p>
+</section>
+<!-- 11 -->
+<section class="dsec" id="l11" style="--c:#4f46e5">
+<h2><span class="ln">11</span> 🗣️ The same pipeline in four dialects — four courier companies, one route</h2>
+<p class="d">Four courier companies, one route: the forms differ, the three commands do not.</p>
+<svg aria-label="Four columns for GitHub Actions, CircleCI, GitLab CI and Jenkins list each dialect's trigger, job, cache, artifact and approval keywords, and all four arrows converge on one box with the same three commands" role="img" viewbox="0 0 940 330">
+<rect class="box" height="160" rx="12" width="212" x="30" y="40"></rect>
+<text class="t m" x="136" y="68">⚙️ GitHub Actions · ci.yml</text>
+<text class="s m" x="136" y="92">on: push / pull_request</text>
+<text class="s m" x="136" y="114">jobs: → runs-on: ubuntu-latest</text>
+<text class="s m" x="136" y="136">actions/cache@v4 + hashFiles()</text>
+<text class="s m" x="136" y="158">actions/upload-artifact@v4</text>
+<text class="s m" x="136" y="180">environment: required reviewers</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<rect class="box" height="160" rx="12" width="212" x="256" y="40"></rect>
+<text class="t m" x="362" y="68">🔄 CircleCI · config.yml</text>
+<text class="s m" x="362" y="92">workflows: + filters: branches</text>
+<text class="s m" x="362" y="114">jobs: → docker: cimg/node</text>
+<text class="s m" x="362" y="136">restore_cache / save_cache</text>
+<text class="s m" x="362" y="158">store_test_results</text>
+<text class="s m" x="362" y="180">hold-for-approval: type: approval</text>
+<g transform="translate(256,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="box" height="160" rx="12" width="212" x="482" y="40"></rect>
+<text class="t m" x="588" y="68">🦊 GitLab · .gitlab-ci.yml</text>
+<text class="s m" x="588" y="92">rules: if: $CI_COMMIT_BRANCH</text>
+<text class="s m" x="588" y="114">stages: [test, build, deploy]</text>
+<text class="s m" x="588" y="136">cache: key: files: [prepare.js]</text>
+<text class="s m" x="588" y="158">artifacts: reports: junit</text>
+<text class="s m" x="588" y="180">when: manual</text>
+<g transform="translate(482,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="box" height="160" rx="12" width="212" x="708" y="40"></rect>
+<text class="t m" x="814" y="68">🎩 Jenkins · Jenkinsfile</text>
+<text class="s m" x="814" y="92">when { branch 'main' }</text>
+<text class="s m" x="814" y="114">stages { stage('✅ test') }</text>
+<text class="s m" x="814" y="136">no built-in cache (workspace)</text>
+<text class="s m" x="814" y="158">junit 'app/test-results.xml'</text>
+<text class="s m" x="814" y="180">input message: 'Deploy…?'</text>
+<g transform="translate(708,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<line class="arr" x1="136" x2="300" y1="200" y2="244"></line>
+<line class="arr" x1="362" x2="410" y1="200" y2="244"></line>
+<line class="arr" x1="588" x2="530" y1="200" y2="244"></line>
+<line class="arr" x1="814" x2="640" y1="200" y2="244"></line>
+<rect class="box" height="70" rx="12" width="450" x="245" y="248"></rect>
+<text class="t m" x="470" y="276">the SAME three commands in every dialect</text>
+<text class="s m" x="470" y="300">node prepare.js · node --test · docker build / docker push</text>
+<g transform="translate(245,248)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<text class="s m" x="815" y="270">each column, top to bottom:</text>
+<text class="s m" x="815" y="290">trigger · job · cache ·</text>
+<text class="s m" x="815" y="310">artifact · approval</text>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-11-four-dialects/lessons/11-four-dialects/README.md">Read full lesson 11 →</a></p>
+</section>
+<!-- 12 -->
+<section class="dsec" id="l12" style="--c:#4f46e5">
+<h2><span class="ln">12</span> 🧹 Pipeline hygiene &amp; the handoff — the rulebook poster</h2>
+<p class="d">The rulebook on the mailroom wall, the scoreboard everyone reads, and the baton passed to the ArgoCD school.</p>
+<svg aria-label="A rulebook poster with five hygiene rules, a DORA scoreboard with the four metrics, and a handoff arrow to the ArgoCD school where the cluster pulls, self-heals and stays drift-free" role="img" viewbox="0 0 940 300">
+<rect class="box" height="240" rx="14" width="420" x="30" y="40"></rect>
+<text class="t m" x="240" y="68">📜 the mailroom rulebook</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<text class="s" x="60" y="100">📌 pin actions, orbs and images to a SHA or digest</text>
+<text class="s" x="60" y="128">🔐 least-privilege tokens — permissions: contents: read</text>
+<text class="s" x="60" y="156">🔒 protect main — pull request + required check + review</text>
+<text class="s" x="60" y="184">🧪 quarantine flaky tests — retries are a smell</text>
+<text class="s" x="60" y="212">⏱️ timeout-minutes + concurrency: cancel-in-progress</text>
+<text class="s m" x="240" y="252">also: secret scanning · lockfiles · build provenance (SLSA)</text>
+<rect class="box" height="120" rx="12" width="420" x="490" y="40"></rect>
+<text class="t m" x="700" y="68">📊 the DORA scoreboard — four metrics, no vanity</text>
+<g transform="translate(490,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="30" rx="8" width="190" x="505" y="84"></rect>
+<text class="s m" x="600" y="104">🚀 deployment frequency</text>
+<rect class="soft" height="30" rx="8" width="190" x="705" y="84"></rect>
+<text class="s m" x="800" y="104">⏱️ lead time for changes</text>
+<rect class="soft" height="30" rx="8" width="190" x="505" y="120"></rect>
+<text class="s m" x="600" y="140">💥 change failure rate</text>
+<rect class="soft" height="30" rx="8" width="190" x="705" y="120"></rect>
+<text class="s m" x="800" y="140">🩹 time to restore service</text>
+<line class="arr" x1="450" x2="486" y1="240" y2="240"></line>
+<rect class="box" height="90" rx="12" width="420" x="490" y="195"></rect>
+<text class="t m" x="700" y="223">🤖 the handoff — ArgoCD school, lesson 01</text>
+<text class="s m" x="700" y="247">a push pipeline can't see drift after delivery;</text>
+<text class="s m" x="700" y="267">ArgoCD pulls from git, self-heals, keeps the board drift-free</text>
+<g transform="translate(490,195)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+</svg>
+<p class="foot"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-12-pipeline-hygiene/lessons/12-pipeline-hygiene/README.md">Read full lesson 12 →</a></p>
+</section>

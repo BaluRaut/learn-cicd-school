@@ -1,0 +1,59 @@
+# ✅ The checking desk (lessons 03–05): runs on EVERY push and pull request.
+# Fork this repo, push a commit, and watch this go green (or red) in the Actions tab.
+name: ✅ ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read            # lesson 06: the job's own token gets the least it needs
+
+concurrency:                # a newer push cancels the older run of the same branch
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false      # lesson 04: let all three rulers finish, even if one fails
+      matrix:
+        node: [20, 22, 24]  # three rulers — the same homework checked three ways
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: 📥 checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: 🗄️ cache the slow preparation (lesson 04)
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: app/prepared
+          key: prepared-${{ hashFiles('app/prepare.js') }}   # change prepare.js → new key → miss
+
+      - name: ⏳ prepare (slow on a miss, skipped on a hit)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: node prepare.js
+
+      - name: 🧪 test
+        run: >
+          node --test
+          --test-reporter=spec  --test-reporter-destination=stdout
+          --test-reporter=junit --test-reporter-destination=test-results.xml
+
+      - name: 📎 upload the report card (lesson 05)
+        if: always()          # especially when tests FAIL — that's when you need the report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-node${{ matrix.node }}
+          path: app/test-results.xml
+          retention-days: 7

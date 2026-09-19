@@ -1,0 +1,84 @@
+# 🦊 The SAME pipeline in the GitLab CI dialect (lesson 11).
+#   stages: test → build → deploy   (jobs in one stage run in parallel)
+# Set these CI/CD variables on the project: AWS_ROLE_ARN, AWS_REGION, AWS_ACCOUNT_ID,
+# ECR_REPOSITORY, EKS_CLUSTER. Credentials come from an ID token (OIDC) — no stored keys.
+stages: [test, build, deploy]
+
+variables:
+  AWS_REGION: ap-south-1
+
+test:
+  stage: test
+  image: node:${NODE}-alpine
+  parallel:
+    matrix:                                   # lesson 04: three rulers
+      - NODE: ["20", "22", "24"]
+  cache:                                      # lesson 04: the drawer, keyed by the file that defines the work
+    key:
+      files: [app/prepare.js]
+    paths: [app/prepared/]
+  script:
+    - cd app
+    - node prepare.js                         # prints "already exists" on a cache hit
+    - node --test --test-reporter=spec --test-reporter-destination=stdout
+                  --test-reporter=junit --test-reporter-destination=test-results.xml
+  artifacts:                                  # lesson 05: the report card — parsed into the MR widget
+    when: always
+    reports:
+      junit: app/test-results.xml
+    paths: [app/test-results.xml]
+    expire_in: 1 week
+
+.aws-badge: &aws-badge                        # 🪪 OIDC: exchange GitLab's ID token for temporary AWS credentials
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    - >
+      export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
+      $(aws sts assume-role-with-web-identity
+      --role-arn "$AWS_ROLE_ARN" --role-session-name "gitlab-${CI_PIPELINE_ID}"
+      --web-identity-token "$GITLAB_OIDC_TOKEN" --duration-seconds 3600
+      --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text))
+
+build-and-push:
+  stage: build
+  image: docker:27
+  services: [docker:27-dind]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH   # only the default branch gets built and pushed
+  <<: *aws-badge
+  script:
+    - apk add --no-cache aws-cli curl
+    - REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+    - IMAGE="${REGISTRY}/${ECR_REPOSITORY}:${CI_COMMIT_SHA}"
+    - docker build --build-arg APP_VERSION=${CI_COMMIT_SHORT_SHA} -t "$IMAGE" app
+    - docker run -d --rm -p 3000:3000 --name smoke "$IMAGE" && sleep 2 && docker exec smoke wget -qO- localhost:3000/healthz && docker stop smoke
+    - aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$REGISTRY"
+    - docker push "$IMAGE"
+
+.deploy: &deploy
+  stage: deploy
+  image: amazon/aws-cli:2.17.0
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  <<: *aws-badge
+  script:
+    - curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && install kubectl /usr/local/bin/kubectl
+    - aws eks update-kubeconfig --region "$AWS_REGION" --name "$EKS_CLUSTER"
+    - IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${CI_COMMIT_SHA}"
+    - sed -i "s|IMAGE_PLACEHOLDER|${IMAGE}|" k8s/deployment.yaml
+    - kubectl apply -n "$NAMESPACE" -f k8s/
+    - kubectl rollout status -n "$NAMESPACE" deployment/hello-courier --timeout=180s
+
+deploy-staging:
+  <<: *deploy
+  variables: { NAMESPACE: staging }
+  environment: { name: staging }
+
+deploy-production:
+  <<: *deploy
+  needs: [deploy-staging]
+  variables: { NAMESPACE: production }
+  environment: { name: production }
+  when: manual                                # 🛑 the principal's signature: a human presses ▶ in the UI

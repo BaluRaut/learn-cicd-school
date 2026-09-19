@@ -1,0 +1,35 @@
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --muted: #475569;
+    --line: #e2e8f0; --accent: #16a34a; --ok: #16a34a; --blue: #2563eb; --bad: #dc2626;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b1220; --card: #131c2e; --ink: #e2e8f0; --muted: #94a3b8; --line: #253349; }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; }
+  .wrap { max-width:1280px; margin: 0 auto; padding: 28px 20px 60px; }
+  a { color: var(--blue); }
+  h1 { font-size: 1.9rem; line-height: 1.25; }
+  .sub { color: var(--muted); max-width: 74ch; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
+  .toc a { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 12px; font-size: .82rem; color: var(--muted); text-decoration: none; }
+  .toc a:hover { color: var(--ink); border-color: var(--muted); }
+  .term { background: var(--card); border: 1px solid var(--line); border-top: 6px solid var(--c, var(--accent)); border-radius: 16px; padding: 22px; margin-top: 26px; scroll-margin-top: 16px; }
+  .term h2 { font-size: 1.3rem; margin-bottom: 10px; }
+  .hist { background: var(--bg); border-left: 5px solid var(--c, var(--accent)); border-radius: 10px; padding: 14px 16px; margin: 10px 0 14px; }
+  .hist b { display: block; margin-bottom: 4px; }
+  .hist p { color: var(--muted); font-size: .95rem; }
+  .quad { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .q { border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .q h4 { margin-bottom: 6px; font-size: .98rem; }
+  .q ul { margin-left: 18px; color: var(--muted); font-size: .92rem; }
+  .q.merit  { border-top: 4px solid var(--ok); }
+  .q.demerit{ border-top: 4px solid var(--bad); }
+  .q.use    { border-top: 4px solid var(--blue); }
+  .q.avoid  { border-top: 4px solid #f59e0b; }
+  .foot { margin-top: 10px; font-size: .92rem; }
+  footer { margin-top: 44px; border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: .88rem; }
+
+  @media (min-width: 1660px) { .wrap { max-width: 1580px; } }
+</style>

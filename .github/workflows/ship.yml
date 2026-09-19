@@ -1,0 +1,91 @@
+# 📦 The photocopier (lesson 07): build the image, prove it runs, push it to ECR
+# tagged with the commit SHA — then hand it to the delivery van (deploy.yml).
+#
+# Runs on every push to main. The PUSH and DEPLOY jobs only run when the repo has the
+# variables below (Settings → Secrets and variables → Actions → Variables); a plain
+# fork stays green and simply skips them:
+#   AWS_ROLE_ARN   arn:aws:iam::123456789012:role/learn-cicd-school-ci   (iam/ shows the role)
+#   AWS_REGION     ap-south-1
+#   ECR_REPOSITORY hello-courier
+#   EKS_CLUSTER    school-eks                                            (deploy.yml only)
+name: 📦 ship
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write           # lesson 06: lets this run ask for an OIDC badge — no stored AWS keys
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: app } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node --test
+
+  build:
+    name: build & smoke-test the image
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 🍱 docker build (version label = short SHA)
+        run: docker build --build-arg APP_VERSION=${GITHUB_SHA::7} -t hello-courier:${GITHUB_SHA} app
+      - name: 🧪 test the BOX, not just the code
+        run: |
+          docker run -d --rm -p 3000:3000 --name smoke hello-courier:${GITHUB_SHA}
+          for i in $(seq 1 20); do curl -fsS localhost:3000/healthz && break; sleep 0.5; done
+          curl -fsS localhost:3000/ | grep -q "version ${GITHUB_SHA::7}"
+          docker stop smoke
+      - name: 💾 keep the image for the push job (same run, different machine)
+        run: docker save hello-courier:${GITHUB_SHA} | gzip > image.tar.gz
+      - uses: actions/upload-artifact@v4
+        with: { name: image, path: image.tar.gz, retention-days: 1 }
+
+  push:
+    name: push to ECR
+    needs: build
+    if: vars.AWS_ROLE_ARN != ''            # skipped on forks without AWS — still green
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: image }
+      - run: docker load < image.tar.gz
+
+      - name: 🪪 show the badge, get a day pass (OIDC → temporary credentials)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: 🎫 log in to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: 🏷️ tag with the commit SHA and push
+        id: meta
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
+        run: |
+          docker tag hello-courier:${GITHUB_SHA} "$IMAGE"
+          docker push "$IMAGE"
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: 🚚 deliver
+    needs: push
+    if: vars.EKS_CLUSTER != ''
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/deploy.yml   # lesson 08–10: staging → approval → production
+    with:
+      image: ${{ needs.push.outputs.image }}

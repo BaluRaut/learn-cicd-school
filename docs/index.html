@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+
+<html lang="mr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title data-en="Learn CI/CD the school way">शाळेच्या पद्धतीने CI/CD शिका</title>
+<meta content="12 branch-by-branch lessons: CI (tests on every push, cache, artifacts, OIDC), CD (build, gates, deploy strategies, Kubernetes) and the same pipeline in GitHub Actions, CircleCI, GitLab CI and Jenkins — ELI5 school analogies, diagrams and hands-on labs." name="description"/>
+<meta content="Learn CI/CD the school way" property="og:title"/>
+<meta content="12 branch-by-branch lessons: CI (tests on every push, cache, artifacts, OIDC), CD (build, gates, deploy strategies, Kubernetes) and the same pipeline in GitHub Actions, CircleCI, GitLab CI and Jenkins — ELI5 school analogies, diagrams and hands-on labs." property="og:description"/>
+<meta content="https://baluraut.github.io/learn-cicd-school/images/big-picture-4k.png" property="og:image"/>
+<meta content="website" property="og:type"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --muted: #475569;
+    --line: #e2e8f0; --accent: #16a34a; --ok: #16a34a; --blue: #2563eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b1220; --card: #131c2e; --ink: #e2e8f0; --muted: #94a3b8; --line: #253349; }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; }
+  .wrap { max-width:1280px; margin: 0 auto; padding: 28px 20px 60px; }
+  a { color: var(--blue); }
+  h1 { font-size: 2rem; line-height: 1.25; }
+  h2 { font-size: 1.4rem; margin: 44px 0 6px; }
+  .sub { color: var(--muted); max-width: 74ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
+  .chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 14px; font-size: .85rem; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 16px; }
+  .lesson { background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--c, var(--accent)); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .lesson .top { display: flex; align-items: center; gap: 10px; }
+  .lesson .num { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--c, var(--accent)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; }
+  .lesson h3 { font-size: 1.02rem; line-height: 1.3; }
+  .lesson .ana { color: var(--muted); font-size: .9rem; }
+  .lesson code { font-size: .78rem; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
+  .lesson a.go { margin-top: auto; font-weight: 600; font-size: .9rem; text-decoration: none; }
+  .lesson a.go + a.go { margin-top: 0; }
+  .lesson a.go:hover { text-decoration: underline; }
+  .callout { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--ok); border-radius: 14px; padding: 18px 20px; margin-top: 16px; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: .88rem; margin-top: 12px; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; border-radius: 10px; padding: 10px 18px; text-decoration: none; font-weight: 700; margin: 14px 10px 0 0; }
+  .btn.alt { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .vs { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 16px; }
+  .vcol { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .vcol h3 { margin-bottom: 8px; }
+  .vcol ul { margin-left: 18px; color: var(--muted); font-size: .93rem; }
+  footer { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: .88rem; }
+
+  @media (min-width: 1660px) { .wrap { max-width: 1580px; } }
+</style>
+<style>
+  .dsec { background: var(--card); border: 1px solid var(--line); border-top: 6px solid var(--c, var(--accent)); border-radius: 16px; padding: 22px 22px 16px; margin-top: 26px; scroll-margin-top: 16px; }
+  .dsec h2 { font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
+  .dsec h2 .ln { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--c, var(--accent)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: .95rem; font-weight: 800; }
+  .dsec p.d { color: var(--muted); font-size: .95rem; margin: 6px 0 4px; }
+  .dsec svg { width: 100%; height: auto; display: block; margin-top: 10px; }
+  .dsec .foot { margin-top: 8px; font-size: .92rem; }
+  .box  { fill: var(--card); stroke: var(--c, var(--accent)); stroke-width: 2; }
+  .soft { fill: var(--bg);  stroke: var(--line); stroke-width: 1.5; }
+  .dead { fill: var(--bg);  stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 6 5; }
+  .t  { font: 600 14px -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
+  .s  { font: 12px -apple-system, "Segoe UI", sans-serif; fill: var(--muted); }
+  .m  { text-anchor: middle; }
+  .arr  { stroke: #64748b; stroke-width: 2; fill: none; marker-end: url(#arw); }
+  .dash { stroke-dasharray: 6 5; }
+  .nc { fill: var(--c, var(--accent)); }
+  .nt { font: 700 12px -apple-system, sans-serif; fill: #fff; text-anchor: middle; }
+</style>
+
+<style id="i18n-css">
+#lang-pick{position:fixed;top:10px;right:10px;z-index:9999;font:600 .85rem -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--card,#fff);color:var(--ink,#0f172a);border:1px solid var(--line,#e2e8f0);border-radius:999px;padding:6px 12px;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer}
+html[lang="mr"] body{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+html[lang="mr"] svg text{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",sans-serif}
+@media print{#lang-pick{display:none}}
+</style></head>
+<body><select aria-label="Language / भाषा" id="lang-pick" onchange="schoolSetLang(this.value)">
+<option value="mr">🇮🇳 मराठी</option><option value="en">🇬🇧 English</option></select>
+<svg height="0" style="position:absolute" width="0"><defs>
+<marker id="arw" markerheight="7" markerwidth="7" orient="auto-start-reverse" refx="9" refy="5" viewbox="0 0 10 10">
+<path d="M0 0 L10 5 L0 10 z" fill="#64748b"></path>
+</marker>
+</defs></svg>
+<div class="wrap">
+<header>
+<h1 data-en="📮 Learn CI/CD the school way">📮 शाळेच्या पद्धतीने CI/CD शिका</h1>
+<p class="sub" data-en="Course &lt;b&gt;3 of 4&lt;/b&gt; in the school's Ops track — &lt;a href=&quot;https://baluraut.github.io/learn-docker-school/&quot;&gt;Docker&lt;/a&gt;
+    packed the lunchbox and &lt;a href=&quot;https://baluraut.github.io/learn-kubernetes-school/&quot;&gt;Kubernetes&lt;/a&gt; runs it; something
+    has to &lt;b&gt;check it, copy it and deliver it&lt;/b&gt; on every push. That's this course: the school's mailroom and courier
+    service — continuous integration, continuous delivery, and the same pipeline written in
+    &lt;b&gt;four dialects&lt;/b&gt; (GitHub Actions, CircleCI, GitLab CI, Jenkins). Afterwards,
+    &lt;a href=&quot;https://baluraut.github.io/learn-argocd-school/&quot;&gt;ArgoCD&lt;/a&gt; keeps the cluster honest.">शाळेच्या Ops ट्रॅकमधील कोर्स <b>4 पैकी 3</b> — <a href="https://baluraut.github.io/learn-docker-school/">Docker</a> ने डबा पॅक केला आणि <a href="https://baluraut.github.io/learn-kubernetes-school/">Kubernetes</a> तो चालवते; प्रत्येक push वर कोणीतरी तो <b>तपासायला, कॉपी करायला आणि पोहोचवायला</b> हवा. तोच हा कोर्स: शाळेची मेलरूम आणि कुरिअर सेवा — continuous integration, continuous delivery, आणि तीच pipeline <b>चार बोलींमध्ये</b> (GitHub Actions, CircleCI, GitLab CI, Jenkins) लिहिलेली. त्यानंतर <a href="https://baluraut.github.io/learn-argocd-school/">ArgoCD</a> cluster ला प्रामाणिक ठेवते.</p>
+<div class="chips" data-en='
+&lt;span class="chip"&gt;✅ tests on every push&lt;/span&gt;&lt;span class="chip"&gt;🗄️ cache&lt;/span&gt;&lt;span class="chip"&gt;📎 artifacts&lt;/span&gt;
+&lt;span class="chip"&gt;🪪 OIDC, no stored keys&lt;/span&gt;&lt;span class="chip"&gt;📦 image = commit SHA&lt;/span&gt;&lt;span class="chip"&gt;🛑 approval gates&lt;/span&gt;
+&lt;span class="chip"&gt;🔁 rolling · blue/green · canary&lt;/span&gt;&lt;span class="chip"&gt;🚚 kubectl from CI&lt;/span&gt;&lt;span class="chip"&gt;🗣️ four dialects&lt;/span&gt;
+'><span class="chip">✅ प्रत्येक push वर चाचण्या</span><span class="chip">🗄️ cache</span><span class="chip">📎 artifact</span> <span class="chip">🪪 OIDC, साठवलेल्या keys नाहीत</span><span class="chip">📦 image = commit SHA</span><span class="chip">🛑 मंजुरीचे गेट</span> <span class="chip">🔁 rolling · blue/green · canary</span><span class="chip">🚚 CI मधून kubectl</span><span class="chip">🗣️ चार बोली</span></div>
+</header>
+<div class="vs">
+<div class="vcol" style="border-top: 5px solid #16a34a">
+<h3 data-en="✅ Part 1 — CHECK IT (free, in your fork)">✅ भाग 1 — तपासा (मोफत, तुमच्या fork मध्ये)</h3>
+<ul>
+<li data-en="why the term-end homework pile-up is integration hell">सत्राच्या शेवटचा गृहपाठाचा ढीग म्हणजे integration hell का</li>
+<li data-en="triggers, jobs, steps, runners — the conveyor belt">trigger, job, step, runner — conveyor belt</li>
+<li data-en="green check on every push; cache hits, matrix, artifacts">प्रत्येक push वर हिरवी खूण; cache hit, matrix, artifact</li>
+<li data-en="secrets done right: the courier's badge (OIDC), least privilege">secrets योग्य पद्धतीने: कुरिअरचा बॅज (OIDC), least privilege</li>
+</ul>
+</div>
+<div class="vcol" style="border-top: 5px solid #d97706">
+<h3 data-en="🚚 Part 2 — DELIVER IT (local cluster or AWS)">🚚 भाग 2 — पोहोचवा (स्थानिक cluster किंवा AWS)</h3>
+<ul>
+<li data-en="build, smoke-test and file the image: tag = the commit SHA">image build करा, smoke-test करा आणि फाइल करा: tag = commit SHA</li>
+<li data-en="staging → the principal's signature → production">staging → प्राचार्यांची सही → production</li>
+<li data-en="rolling, blue/green, canary — and a 10-second rollback">rolling, blue/green, canary — आणि 10 सेकंदांचे rollback</li>
+<li data-en="the delivery van: kubectl from CI, rollout status as the gate">डिलिव्हरी व्हॅन: CI मधून kubectl, गेट म्हणून rollout status</li>
+</ul>
+</div>
+<div class="vcol" style="border-top: 5px solid #4f46e5">
+<h3 data-en="🗣️ Part 3 — THE REAL WORLD">🗣️ भाग 3 — खरे जग</h3>
+<ul>
+<li data-en="one Rosetta table: GitHub Actions · CircleCI · GitLab CI · Jenkins">एक Rosetta तक्ता: GitHub Actions · CircleCI · GitLab CI · Jenkins</li>
+<li data-en="hosted vs self-hosted; keep logic in scripts, YAML thin">hosted vs self-hosted; logic script मध्ये ठेवा, YAML पातळ</li>
+<li data-en="hygiene: pin by SHA, quarantine flaky tests, DORA's four metrics">स्वच्छता: SHA ने pin करा, लहरी चाचण्या बाजूला ठेवा, DORA ची चार मापे</li>
+<li data-en="what push pipelines can't fix → the ArgoCD school">push pipeline जे दुरुस्त करू शकत नाही → ArgoCD शाळा</li>
+</ul>
+</div>
+</div><div class="callout" data-en="🎯 &lt;b&gt;After this course you should be able to:&lt;/b&gt; explain CI vs continuous delivery vs continuous deployment · read any pipeline file and name its trigger, jobs, steps and runner · make a pipeline fast with caches and a matrix without making it lie · move files between jobs and publish test reports · deploy from CI to a cloud with &lt;b&gt;no stored keys&lt;/b&gt; · put an approval gate and a staging step in front of production · choose rolling, blue/green or canary and roll back in seconds · translate the same pipeline between four CI systems · say what a push pipeline still can't do, and why the next course exists.">🎯 <b>या कोर्सनंतर तुम्हाला जमले पाहिजे:</b> CI vs continuous delivery vs continuous deployment समजावणे · कोणतीही pipeline फाइल वाचून तिचे trigger, job, step आणि runner ओळखणे · cache आणि matrix ने pipeline वेगवान करणे, तिला खोटे न बोलवता · job मध्ये फाइल हलवणे आणि चाचणी अहवाल प्रकाशित करणे · <b>एकही साठवलेली key नसताना</b> CI मधून cloud वर deploy करणे · production च्या पुढे मंजुरीचे गेट आणि staging पायरी ठेवणे · rolling, blue/green किंवा canary निवडणे आणि सेकंदांत rollback करणे · तीच pipeline चार CI प्रणालींमध्ये भाषांतरित करणे · push pipeline अजूनही काय करू शकत नाही आणि पुढचा कोर्स का आहे हे सांगणे.</div>
+<h2 data-en="🗺️ The big picture — one diagram, the whole journey" id="big-picture">🗺️ संपूर्ण चित्र — एक आकृती, संपूर्ण प्रवास</h2>
+<p class="sub" data-en='The whole course on one canvas: CHECK IT (green, lessons 1–6), DELIVER IT (amber, lessons 7–10)
+  and THE REAL WORLD (indigo, lessons 11–12). Click it for the &lt;a href="images/big-picture-4k.png"&gt;4K version&lt;/a&gt; —
+  great as a single reference.'>संपूर्ण कोर्स एका कॅनव्हासवर: तपासा (हिरवे, धडे 1–6), पोहोचवा (केशरी, धडे 7–10) आणि खरे जग (नीळसर जांभळे, धडे 11–12). <a href="images/big-picture-4k.png">4K आवृत्तीसाठी</a> क्लिक करा — एकाच संदर्भ-चित्रासाठी उत्तम.</p>
+<figure style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:16px">
+<a href="images/big-picture-4k.png"><img alt="The big picture: CI checks every push in the mailroom, CD copies the image to ECR and delivers it to Kubernetes through staging and an approval gate, and four dialects describe the same pipeline" loading="lazy" src="images/big-picture.svg" style="width:100%;height:auto;display:block"/></a>
+</figure>
+<h2 data-en="✅ Part 1 — CHECK IT: continuous integration (lessons 1–6)" id="part1">✅ भाग 1 — तपासा: continuous integration (धडे 1–6)</h2>
+<p class="sub" data-en="Everything here runs in a fork of this repo on GitHub's free runners — no cloud account, no cost.
+  One git branch = one idea; branch 04 contains lessons 01–04.">इथले सगळे या repo च्या fork मध्ये GitHub च्या मोफत runner वर चालते — cloud खाते नाही, खर्च नाही. एक git branch = एक कल्पना; branch 04 मध्ये धडे 01–04 असतात.</p>
+<div class="grid">
+<div class="lesson" style="--c:#16a34a"><div class="top"><span class="num">1</span><h3 data-en="📮 Why CI/CD">📮 CI/CD का</h3></div><span class="ana" data-en="The homework pile-up vs a mailroom that checks every submission the day it arrives.">गृहपाठाचा ढीग विरुद्ध प्रत्येक सादरीकरण त्याच दिवशी तपासणारी मेलरूम.</span><code>lesson-01-why-cicd</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-01-why-cicd/lessons/01-why-cicd/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l01">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#16a34a"><div class="top"><span class="num">2</span><h3 data-en="🧩 Anatomy of a pipeline">🧩 pipeline ची रचना</h3></div><span class="ana" data-en="The conveyor belt: a bell (trigger), desks (jobs), tasks (steps), clerks (runners) — same words, four dialects.">Conveyor belt: घंटा (trigger), बाक (job), कामे (step), कारकून (runner) — तेच शब्द, चार बोली.</span><code>lesson-02-pipeline-anatomy</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-02-pipeline-anatomy/lessons/02-pipeline-anatomy/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l02">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#16a34a"><div class="top"><span class="num">3</span><h3 data-en="✅ Your first pipeline">✅ तुमची पहिली pipeline</h3></div><span class="ana" data-en="The checking desk stamps ✅ or ❌ on every push — fork it and watch it go green.">तपासणी डेस्क प्रत्येक push वर ✅ किंवा ❌ चा शिक्का मारतो — fork करा आणि हिरवे होताना पहा.</span><code>lesson-03-first-pipeline</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-03-first-pipeline/lessons/03-first-pipeline/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l03">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#16a34a"><div class="top"><span class="num">4</span><h3 data-en="⚡ Fast pipelines">⚡ वेगवान pipeline</h3></div><span class="ana" data-en="The drawer of sharpened pencils (cache), several desks at once (parallel), three rulers (matrix).">टोक काढलेल्या पेन्सिलींचा ड्रॉवर (cache), एकाच वेळी अनेक बाक (parallel), तीन फूटपट्ट्या (matrix).</span><code>lesson-04-cache-parallel-matrix</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-04-cache-parallel-matrix/lessons/04-cache-parallel-matrix/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l04">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#16a34a"><div class="top"><span class="num">5</span><h3 data-en="📎 Artifacts &amp;amp; test reports">📎 Artifact &amp; चाचणी अहवाल</h3></div><span class="ana" data-en="The envelope carried between desks, and the report card pinned on the board.">बाकांमध्ये फिरणारे पाकीट, आणि फलकावर लावलेले प्रगतिपुस्तक.</span><code>lesson-05-artifacts-reports</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-05-artifacts-reports/lessons/05-artifacts-reports/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l05">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#16a34a"><div class="top"><span class="num">6</span><h3>🪪 Secrets &amp; least privilege</h3></div><span class="ana" data-en="The courier never carries the master key — it shows a badge and gets a day pass (OIDC). 🔗 IAM">कुरिअर कधीही मास्टर किल्ली नेत नाही — तो बॅज दाखवतो आणि डे पास मिळवतो (OIDC). 🔗 IAM</span><code>lesson-06-secrets-oidc</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-06-secrets-oidc/lessons/06-secrets-oidc/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l06">आकृती पहा ↗</a></div>
+</div>
+<div class="callout" data-en="🎯 &lt;b&gt;After Part 1 you should be able to explain:&lt;/b&gt; what a pipeline run is made of · why the cache key is a hash of the inputs · artifact vs cache · why the run's token has &lt;code&gt;contents: read&lt;/code&gt; and nothing more · how a CI job gets cloud credentials without a single stored key.">🎯 <b>भाग 1 नंतर तुम्हाला समजावता आले पाहिजे:</b> pipeline चा run कशाचा बनलेला असतो · cache key ही input चा hash का असते · artifact vs cache · run च्या token कडे <code>contents: read</code> आणि आणखी काहीच का नसते · CI job ला एकही साठवलेली key नसताना cloud credentials कशी मिळतात.</div>
+<h2 data-en="🚚 Part 2 — DELIVER IT: continuous delivery (lessons 7–10)" id="part2">🚚 भाग 2 — पोहोचवा: continuous delivery (धडे 7–10)</h2>
+<p class="sub" data-en="From a green check to a running version: the photocopier, the locker, the signature, the van.
+  The labs run on a local cluster (Docker Desktop or kind); the AWS steps are marked and optional.">हिरव्या खुणेपासून चालू आवृत्तीपर्यंत: फोटोकॉपी मशीन, लॉकर, सही, व्हॅन. प्रयोग स्थानिक cluster वर (Docker Desktop किंवा kind) चालतात; AWS च्या पायऱ्या खुणा केलेल्या आणि ऐच्छिक आहेत.</p>
+<div class="grid">
+<div class="lesson" style="--c:#d97706"><div class="top"><span class="num">7</span><h3 data-en="📦 Build &amp;amp; push the image">📦 image build &amp; push करा</h3></div><span class="ana" data-en="The photocopier: copy the checked homework, label it with the commit's fingerprint, file it in the locker. 🔗 Docker">फोटोकॉपी मशीन: तपासलेल्या गृहपाठाची प्रत काढा, commit च्या ठशाने लेबल लावा, लॉकरमध्ये फाइल करा. 🔗 Docker</span><code>lesson-07-build-push-image</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-07-build-push-image/lessons/07-build-push-image/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l07">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#d97706"><div class="top"><span class="num">8</span><h3 data-en="🛑 Environments &amp;amp; gates">🛑 Environments &amp; गेट</h3></div><span class="ana" data-en="The practice board first; the principal signs before anything reaches the main board.">आधी सराव फलक; मुख्य फलकावर काही पोहोचण्याआधी प्राचार्य सही करतात.</span><code>lesson-08-environments-gates</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-08-environments-gates/lessons/08-environments-gates/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l08">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#d97706"><div class="top"><span class="num">9</span><h3 data-en="🔁 Deploy strategies &amp;amp; rollback">🔁 Deploy च्या पद्धती &amp; rollback</h3></div><span class="ana" data-en="Replace the pins one by one, flip between two boards, or show the notice to one class first. 🔗 Kubernetes">टाचण्या एक एक करून बदला, दोन फलकांमध्ये पलटा, किंवा सूचना आधी एकाच वर्गाला दाखवा. 🔗 Kubernetes</span><code>lesson-09-deploy-strategies</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-09-deploy-strategies/lessons/09-deploy-strategies/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l09">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#d97706"><div class="top"><span class="num">10</span><h3 data-en="🚚 Deploy to Kubernetes from CI">🚚 CI मधून Kubernetes वर deploy</h3></div><span class="ana" data-en="The delivery van: drive to the cluster with the day pass, pin the notice, wait until it's readable.">डिलिव्हरी व्हॅन: डे पास घेऊन cluster पर्यंत जा, सूचना लावा, ती वाचनीय होईपर्यंत थांबा.</span><code>lesson-10-deploy-to-kubernetes</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-10-deploy-to-kubernetes/lessons/10-deploy-to-kubernetes/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l10">आकृती पहा ↗</a></div>
+</div>
+<div class="callout" data-en="🎯 &lt;b&gt;After Part 2 you should be able to explain:&lt;/b&gt; why the image tag is the commit SHA · what pauses a production job until a human approves, and where that approval is recorded · how a rolling update with a readiness probe avoids downtime · the four commands the delivery van runs, and what nobody does after it leaves.">🎯 <b>भाग 2 नंतर तुम्हाला समजावता आले पाहिजे:</b> image चा tag commit SHA का असतो · माणसाच्या मंजुरीपर्यंत production job काय थांबवते, आणि ती मंजुरी कुठे नोंदली जाते · readiness probe असलेले rolling update downtime कसे टाळते · डिलिव्हरी व्हॅन चालवते त्या चार आज्ञा, आणि ती गेल्यावर कोणी काय करत नाही.</div>
+<h2 data-en="🗣️ Part 3 — THE REAL WORLD: four dialects, one rulebook (lessons 11–12)" id="part3">🗣️ भाग 3 — खरे जग: चार बोली, एक नियमपुस्तक (धडे 11–12)</h2>
+<p class="sub" data-en="The same pipeline exists four times in this repo. Learn to translate, then learn the habits that keep
+  a mailroom trustworthy — and where this course hands over to GitOps.">तीच pipeline या repo मध्ये चार वेळा आहे. भाषांतर करायला शिका, मग मेलरूम विश्वासार्ह ठेवणाऱ्या सवयी शिका — आणि हा कोर्स GitOps कडे कुठे सोपवतो ते पहा.</p>
+<div class="grid">
+<div class="lesson" style="--c:#4f46e5"><div class="top"><span class="num">11</span><h3 data-en="🗣️ The same pipeline in four dialects">🗣️ तीच pipeline चार बोलींमध्ये</h3></div><span class="ana" data-en="Four courier companies, same route, different forms: GitHub Actions, CircleCI, GitLab CI, Jenkins.">चार कुरिअर कंपन्या, तोच मार्ग, वेगळे फॉर्म: GitHub Actions, CircleCI, GitLab CI, Jenkins.</span><code>lesson-11-four-dialects</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-11-four-dialects/lessons/11-four-dialects/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l11">आकृती पहा ↗</a></div>
+<div class="lesson" style="--c:#4f46e5"><div class="top"><span class="num">12</span><h3 data-en="🧹 Pipeline hygiene &amp;amp; the handoff">🧹 Pipeline ची स्वच्छता &amp; हस्तांतरण</h3></div><span class="ana" data-en="The mailroom rulebook, the DORA scoreboard — and the baton pass to ArgoCD.">मेलरूमचे नियमपुस्तक, DORA चा गुणफलक — आणि ArgoCD कडे दंडुका सोपवणे.</span><code>lesson-12-pipeline-hygiene</code><a class="go" data-en="Read lesson →" href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-12-pipeline-hygiene/lessons/12-pipeline-hygiene/README.md">धडा वाचा →</a><a class="go" data-en="See the diagram ↗" href="lesson-diagrams.html#l12">आकृती पहा ↗</a></div>
+</div>
+<div class="callout" data-en="🎯 &lt;b&gt;After Part 3 you should be able to:&lt;/b&gt; read a CircleCI, GitLab or Jenkins pipeline you have never seen · say which of DORA's four metrics a change would move · name what a push pipeline cannot see (drift) and which course fixes it.">🎯 <b>भाग 3 नंतर तुम्हाला जमले पाहिजे:</b> कधीही न पाहिलेली CircleCI, GitLab किंवा Jenkins pipeline वाचणे · एखादा बदल DORA च्या चार मापांपैकी कोणते हलवेल हे सांगणे · push pipeline ला काय दिसत नाही (drift) आणि कोणता कोर्स ते दुरुस्त करतो हे ओळखणे.</div>
+<pre><code># take the course locally (a GitHub account for Part 1; Docker Desktop or kind for the local labs):
+gh repo fork BaluRaut/learn-cicd-school --clone
+cd learn-cicd-school
+git checkout lesson-01-why-cicd   # then open lessons/01-why-cicd/README.md</code></pre>
+<div class="callout" data-en='🗣️ &lt;b&gt;Four dialects, side by side:&lt;/b&gt; the repo carries &lt;code&gt;.github/workflows/&lt;/code&gt;, &lt;code&gt;.circleci/config.yml&lt;/code&gt;, &lt;code&gt;.gitlab-ci.yml&lt;/code&gt; and a &lt;code&gt;Jenkinsfile&lt;/code&gt; that all describe the same conveyor. The &lt;a href="pipelines.html"&gt;four-dialect page&lt;/a&gt; shows them in tabs with a Rosetta table — every lesson from 03 to 10 also shows its step in all four.'>🗣️ <b>चार बोली, शेजारी शेजारी:</b> या repo मध्ये <code>.github/workflows/</code>, <code>.circleci/config.yml</code>, <code>.gitlab-ci.yml</code> आणि एक <code>Jenkinsfile</code> आहे — सगळे एकाच conveyor चे वर्णन करतात. <a href="pipelines.html">चार-बोली पान</a> ते Rosetta तक्त्यासह tab मध्ये दाखवते — 03 ते 10 प्रत्येक धडाही आपली पायरी चारही बोलींमध्ये दाखवतो.</div>
+<div class="callout" data-en='🎓 &lt;b&gt;The school series:&lt;/b&gt; 0️⃣ &lt;a href="https://baluraut.github.io/learn-aws-school/"&gt;AWS foundations&lt;/a&gt; → 1️⃣ &lt;a href="https://baluraut.github.io/learn-docker-school/"&gt;Docker &amp;amp; ECR&lt;/a&gt; packs the image →
+    2️⃣ &lt;a href="https://baluraut.github.io/learn-kubernetes-school/"&gt;Kubernetes&lt;/a&gt; runs it at scale → 3️⃣ this course checks, copies and delivers it on every push →
+    4️⃣ &lt;a href="https://baluraut.github.io/learn-argocd-school/"&gt;ArgoCD&lt;/a&gt; keeps the cluster honest, forever. Same style, same analogies universe, same demo-app family.'>🎓 <b>शाळेची मालिका:</b> 0️⃣ <a href="https://baluraut.github.io/learn-aws-school/">AWS पाया</a> → 1️⃣ <a href="https://baluraut.github.io/learn-docker-school/">Docker &amp; ECR</a> image पॅक करते → 2️⃣ <a href="https://baluraut.github.io/learn-kubernetes-school/">Kubernetes</a> ती मोठ्या प्रमाणावर चालवते → 3️⃣ हा कोर्स प्रत्येक push वर ती तपासतो, कॉपी करतो आणि पोहोचवतो → 4️⃣ <a href="https://baluraut.github.io/learn-argocd-school/">ArgoCD</a> cluster ला कायमचे प्रामाणिक ठेवते. तीच शैली, त्याच उपमांचे विश्व, तेच डेमो-ॲप कुटुंब.</div>
+<h2 data-en="📐 The lesson diagrams — follow the numbers" id="diagrams">📐 धड्यांच्या आकृत्या — क्रमांक अनुसरा</h2>
+<p class="sub" data-en='Every lesson as one numbered box-and-arrow diagram, one after another —
+  readable right here (green = CI, amber = CD, indigo = the real world). Also on a
+  &lt;a href="lesson-diagrams.html"&gt;standalone page&lt;/a&gt; with jump navigation.'>प्रत्येक धडा एक क्रमांकित बॉक्स-आणि-बाण आकृती म्हणून, एकामागोमाग एक — इथेच वाचता येईल (हिरवे = CI, केशरी = CD, नीळसर जांभळे = खरे जग). <a href="lesson-diagrams.html">स्वतंत्र पानावरही</a>, उडी मारायच्या दुव्यांसह.</p>
+<!-- 01 -->
+<section class="dsec" id="l01" style="--c:#16a34a">
+<h2 data-en='&lt;span class="ln"&gt;1&lt;/span&gt; 📮 Why CI/CD — the homework pile-up'><span class="ln">1</span> 📮 CI/CD का — गृहपाठाचा ढीग</h2>
+<p class="d" data-en="Small submissions checked the day they arrive beat one giant merge at term end; the pipeline is the conveyor that checks, copies and delivers.">सत्राच्या शेवटी एका अजस्र merge पेक्षा त्याच दिवशी तपासलेली छोटी सादरीकरणे सरस; pipeline हा तपासणारा, कॉपी करणारा आणि पोहोचवणारा conveyor आहे.</p>
+<svg aria-label="A term-end pile of forty homeworks merged on the last day contrasted with a mailroom conveyor that checks, copies and delivers every git push the day it arrives" role="img" viewbox="0 0 940 300">
+<rect class="dead" height="100" rx="12" width="240" x="40" y="70"></rect>
+<text class="t m" data-en="💥 term-end pile-up" x="160" y="102">💥 सत्राच्या शेवटचा ढीग</text>
+<text class="s m" data-en="40 homeworks merged on the last day" x="160" y="128">शेवटच्या दिवशी merge केलेले 40 गृहपाठ</text>
+<text class="s m" data-en="nothing fits — integration hell" x="160" y="150">काहीच जुळत नाही — integration hell</text>
+<g transform="translate(40,70)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<text class="s m" x="305" y="125">vs</text>
+<rect class="soft" height="150" rx="14" width="590" x="330" y="40"></rect>
+<text class="t m" data-en="📮 the mailroom conveyor — every submission, the day it arrives" x="625" y="68">📮 मेलरूमचा conveyor — प्रत्येक सादरीकरण, त्याच दिवशी</text>
+<rect class="box" height="80" rx="10" width="110" x="350" y="88"></rect>
+<text class="t m" x="405" y="118">git push</text>
+<text class="s m" data-en="the submission" x="405" y="142">सादरीकरण</text>
+<rect class="box" height="80" rx="10" width="110" x="500" y="88"></rect>
+<text class="t m" data-en="✅ check" x="555" y="118">✅ तपासा</text>
+<text class="s m" x="555" y="142">node --test</text>
+<g transform="translate(500,88)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="box" height="80" rx="10" width="110" x="650" y="88"></rect>
+<text class="t m" data-en="📦 copy" x="705" y="118">📦 कॉपी</text>
+<text class="s m" x="705" y="142">docker build</text>
+<g transform="translate(650,88)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="box" height="80" rx="10" width="110" x="800" y="88"></rect>
+<text class="t m" data-en="🚚 deliver" x="855" y="118">🚚 पोहोचवा</text>
+<text class="s m" x="855" y="142">kubectl apply</text>
+<g transform="translate(800,88)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<line class="arr" x1="460" x2="496" y1="128" y2="128"></line>
+<line class="arr" x1="610" x2="646" y1="128" y2="128"></line>
+<line class="arr" x1="760" x2="796" y1="128" y2="128"></line>
+<text class="s m" data-en="small commits, checked one at a time — nothing piles up" x="625" y="182">छोटे commit, एक एक करून तपासलेले — ढीग साचत नाही</text>
+<rect class="soft" height="70" rx="12" width="880" x="40" y="215"></rect>
+<text class="s m" data-en="CI = check every submission the day it arrives · continuous delivery = a checked copy is always ready to send" x="480" y="242">CI = प्रत्येक सादरीकरण त्याच दिवशी तपासा · continuous delivery = तपासलेली प्रत नेहमी पाठवायला तयार</text>
+<text class="s m" data-en="continuous deployment = it is sent automatically · Docker packs the lunchbox, Kubernetes runs it, this course MOVES it" x="480" y="266">continuous deployment = ती आपोआप पाठवली जाते · Docker डबा पॅक करते, Kubernetes चालवते, हा कोर्स तो हलवतो</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-01-why-cicd/lessons/01-why-cicd/README.md"&gt;Read full lesson 01 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-01-why-cicd/lessons/01-why-cicd/README.md">पूर्ण धडा 01 वाचा →</a></p>
+</section>
+<!-- 02 -->
+<section class="dsec" id="l02" style="--c:#16a34a">
+<h2 data-en='&lt;span class="ln"&gt;2&lt;/span&gt; 🧩 Anatomy of a pipeline — the bell, the desks, the clerks'><span class="ln">2</span> 🧩 pipeline ची रचना — घंटा, बाक, कारकून</h2>
+<p class="d" data-en="A bell rings (trigger), a clerk (runner) sits at a desk (job) and works through its tasks (steps) — with a drawer, envelopes, a safe and a locked door on the side.">घंटा वाजते (trigger), कारकून (runner) बाकावर (job) बसतो आणि आपली कामे (step) एक एक करून करतो — बाजूला ड्रॉवर, पाकिटे, तिजोरी आणि कुलूपबंद दार.</p>
+<svg aria-label="A push or pull request triggers a run; an ubuntu-latest runner hosts the test job whose steps run in order; cache, artifact, secrets and environment sit beside it; a strip maps the vocabulary of the four CI dialects" role="img" viewbox="0 0 940 330">
+<rect class="box" height="90" rx="12" width="140" x="30" y="50"></rect>
+<text class="t m" x="100" y="80">🔔 trigger</text>
+<text class="s m" x="100" y="104">on: push</text>
+<text class="s m" x="100" y="124">on: pull_request</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="170" x2="206" y1="95" y2="95"></line>
+<rect class="box" height="190" rx="14" width="440" x="210" y="40"></rect>
+<text class="t m" data-en="🧑‍💼 runner: ubuntu-latest — a fresh clerk for each job" x="430" y="66">🧑‍💼 runner: ubuntu-latest — प्रत्येक job साठी नवा कारकून</text>
+<g transform="translate(210,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="135" rx="10" width="400" x="230" y="80"></rect>
+<text class="t m" data-en="🗂️ job: test (node 22) — one desk" x="430" y="104">🗂️ job: test (node 22) — एक बाक</text>
+<text class="s m" data-en="steps = the tasks done at that desk, in order:" x="430" y="130">steps = त्या बाकावर क्रमाने केली जाणारी कामे:</text>
+<text class="s m" x="430" y="152">📥 checkout → 🟢 setup-node → 🗄️ cache → ⏳ prepare</text>
+<text class="s m" data-en="→ 🧪 node --test → 📎 upload-artifact (report card)" x="430" y="174">→ 🧪 node --test → 📎 upload-artifact (प्रगतिपुस्तक)</text>
+<text class="s m" data-en="run: = a shell command · uses: = a ready-made step" x="430" y="200">run: = shell आज्ञा · uses: = तयार पायरी</text>
+<g transform="translate(230,80)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="650" x2="691" y1="60" y2="60"></line>
+<line class="arr" x1="650" x2="691" y1="110" y2="110"></line>
+<line class="arr" x1="650" x2="691" y1="160" y2="160"></line>
+<line class="arr" x1="650" x2="691" y1="210" y2="210"></line>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="40"></rect>
+<text class="s m" data-en="🗄️ cache — the drawer (may vanish)" x="807" y="65">🗄️ cache — ड्रॉवर (नाहीसा होऊ शकतो)</text>
+<g transform="translate(695,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="90"></rect>
+<text class="s m" data-en="📎 artifact — the envelope (kept)" x="807" y="115">📎 artifact — पाकीट (जपले जाते)</text>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="140"></rect>
+<text class="s m" data-en="🔐 secrets — masked in the logs" x="807" y="165">🔐 secrets — log मध्ये झाकलेली</text>
+<rect class="soft" height="40" rx="8" width="225" x="695" y="190"></rect>
+<text class="s m" data-en="🛑 environment — the approval gate" x="807" y="215">🛑 environment — मंजुरीचे गेट</text>
+<rect class="soft" height="68" rx="12" width="890" x="30" y="250"></rect>
+<text class="s m" data-en="🗣️ same words, four dialects — GitHub Actions: workflow · job · step · runner · CircleCI: workflow · job · step · executor" x="475" y="274">🗣️ तेच शब्द, चार बोली — GitHub Actions: workflow · job · step · runner · CircleCI: workflow · job · step · executor</text>
+<text class="s m" x="475" y="298">GitLab CI: pipeline · stage · job · runner · Jenkins: pipeline · stage · step · agent</text>
+<g transform="translate(30,250)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-02-pipeline-anatomy/lessons/02-pipeline-anatomy/README.md"&gt;Read full lesson 02 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-02-pipeline-anatomy/lessons/02-pipeline-anatomy/README.md">पूर्ण धडा 02 वाचा →</a></p>
+</section>
+<!-- 03 -->
+<section class="dsec" id="l03" style="--c:#16a34a">
+<h2 data-en='&lt;span class="ln"&gt;3&lt;/span&gt; ✅ Your first pipeline — green check on every push'><span class="ln">3</span> ✅ तुमची पहिली pipeline — प्रत्येक push वर हिरवी खूण</h2>
+<p class="d" data-en="Fork, push, watch the checking desk stamp ✅ or ❌ on the commit — and learn to read the log when it's red.">Fork करा, push करा, तपासणी डेस्क commit वर ✅ किंवा ❌ चा शिक्का मारताना पहा — आणि लाल असेल तेव्हा log वाचायला शिका.</p>
+<svg aria-label="A push from your fork starts one run with three parallel test jobs on node 20, 22 and 24 that end in a green check on the commit, or a red one you fix and push again" role="img" viewbox="0 0 940 300">
+<rect class="box" height="90" rx="12" width="170" x="30" y="100"></rect>
+<text class="t m" data-en="🧑‍🎓 your fork" x="115" y="132">🧑‍🎓 तुमचा fork</text>
+<text class="s m" x="115" y="156">git push</text>
+<text class="s m" data-en="a new submission" x="115" y="176">नवे सादरीकरण</text>
+<g transform="translate(30,100)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="200" x2="236" y1="145" y2="145"></line>
+<rect class="box" height="220" rx="14" width="380" x="240" y="40"></rect>
+<text class="t m" data-en="📮 a run of ✅ ci — one run per push" x="430" y="68">📮 ✅ ci चा एक run — प्रत्येक push ला एक</text>
+<g transform="translate(240,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="100" rx="10" width="105" x="262" y="88"></rect>
+<text class="t m" x="314" y="112">node 20</text>
+<text class="s m" x="314" y="136">📥 checkout</text>
+<text class="s m" x="314" y="156">⏳ prepare</text>
+<text class="s m" x="314" y="176">🧪 node --test</text>
+<rect class="soft" height="100" rx="10" width="105" x="377" y="88"></rect>
+<text class="t m" x="429" y="112">node 22</text>
+<text class="s m" x="429" y="136">📥 checkout</text>
+<text class="s m" x="429" y="156">⏳ prepare</text>
+<text class="s m" x="429" y="176">🧪 node --test</text>
+<rect class="soft" height="100" rx="10" width="105" x="492" y="88"></rect>
+<text class="t m" x="544" y="112">node 24</text>
+<text class="s m" x="544" y="136">📥 checkout</text>
+<text class="s m" x="544" y="156">⏳ prepare</text>
+<text class="s m" x="544" y="176">🧪 node --test</text>
+<text class="s m" data-en="three desks at once — the same commit, three rulers 📏" x="430" y="215">एकाच वेळी तीन बाक — तोच commit, तीन फूटपट्ट्या 📏</text>
+<text class="s m" data-en="concurrency: a newer push cancels the older run" x="430" y="238">concurrency: नवा push जुना run रद्द करतो</text>
+<line class="arr" x1="620" x2="656" y1="120" y2="120"></line>
+<rect class="box" height="80" rx="12" width="250" x="660" y="80"></rect>
+<text class="t m" data-en="✅ green check on the commit" x="785" y="110">✅ commit वर हिरवी खूण</text>
+<text class="s m" data-en="all three jobs passed" x="785" y="134">तिन्ही job पास झाले</text>
+<g transform="translate(660,80)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr dash" x1="620" x2="656" y1="220" y2="220"></line>
+<rect class="dead" height="80" rx="12" width="250" x="660" y="180"></rect>
+<text class="t m" data-en="❌ red check" x="785" y="208">❌ लाल खूण</text>
+<text class="s m" data-en="read the log, fix, push again" x="785" y="232">log वाचा, दुरुस्त करा, पुन्हा push करा</text>
+<text class="s m" data-en="→ a new run; nobody is blocked" x="785" y="252">→ नवा run; कोणी अडत नाही</text>
+<g transform="translate(660,180)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<text class="s m" data-en="pull request = the same check runs BEFORE the merge · gh run watch / gh run view --log follow it from the terminal" x="470" y="285">pull request = तीच तपासणी merge च्या आधी चालते · gh run watch / gh run view --log ने टर्मिनलमधून पहा</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-03-first-pipeline/lessons/03-first-pipeline/README.md"&gt;Read full lesson 03 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-03-first-pipeline/lessons/03-first-pipeline/README.md">पूर्ण धडा 03 वाचा →</a></p>
+</section>
+<!-- 04 -->
+<section class="dsec" id="l04" style="--c:#16a34a">
+<h2 data-en='&lt;span class="ln"&gt;4&lt;/span&gt; ⚡ Fast pipelines — cache, parallel jobs, matrix'><span class="ln">4</span> ⚡ वेगवान pipeline — cache, समांतर job, matrix</h2>
+<p class="d" data-en="Key the drawer by the file that defines the work; run the three rulers side by side; let all of them finish.">काम ठरवणाऱ्या फाइलवरून ड्रॉवरला किल्ली द्या; तीन फूटपट्ट्या शेजारी शेजारी चालवा; सगळ्यांना पूर्ण होऊ द्या.</p>
+<svg aria-label="A cache key hashed from app/prepare.js opens a drawer that either restores prepared/ instantly or makes node prepare.js pay the hash rounds; the matrix runs node 20, 22 and 24 in parallel with fail-fast off" role="img" viewbox="0 0 940 300">
+<rect class="box" height="110" rx="12" width="250" x="30" y="60"></rect>
+<text class="t m" data-en="🔑 the cache key" x="155" y="92">🔑 cache ची key</text>
+<text class="s m" data-en="prepared-&amp;lt;hash of app/prepare.js&amp;gt;" x="155" y="118">prepared-&lt;app/prepare.js चा hash&gt;</text>
+<text class="s m" data-en="hashFiles(): same file → same key" x="155" y="138">hashFiles(): तीच फाइल → तीच key</text>
+<text class="s m" data-en="edit prepare.js → new key → a miss" x="155" y="158">prepare.js बदला → नवी key → miss</text>
+<g transform="translate(30,60)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="280" x2="316" y1="115" y2="115"></line>
+<rect class="box" height="170" rx="14" width="300" x="320" y="40"></rect>
+<text class="t m" data-en="🗄️ the drawer — actions/cache@v4" x="470" y="68">🗄️ ड्रॉवर — actions/cache@v4</text>
+<g transform="translate(320,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="52" rx="8" width="270" x="335" y="82"></rect>
+<text class="s m" data-en="⚡ HIT — prepared/ restored, step skipped" x="470" y="102">⚡ HIT — prepared/ परत मिळाले, पायरी वगळली</text>
+<text class="s m" data-en='"already exists — nothing to do" · ~1 s' x="470" y="122">"already exists — nothing to do" · ~1 से</text>
+<rect class="soft" height="52" rx="8" width="270" x="335" y="144"></rect>
+<text class="s m" x="470" y="164">⏳ MISS — node prepare.js: 12,000,000</text>
+<text class="s m" data-en="hash rounds · ~8–10 s on a runner" x="470" y="184">hash फेऱ्या · runner वर ~8–10 से</text>
+<line class="arr" x1="620" x2="656" y1="125" y2="125"></line>
+<rect class="box" height="170" rx="14" width="250" x="660" y="40"></rect>
+<text class="t m" data-en="📏📏📏 matrix — three rulers" x="785" y="68">📏📏📏 matrix — तीन फूटपट्ट्या</text>
+<g transform="translate(660,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="soft" height="40" rx="8" width="68" x="680" y="84"></rect>
+<text class="s m" x="714" y="108">node 20</text>
+<rect class="soft" height="40" rx="8" width="68" x="758" y="84"></rect>
+<text class="s m" x="792" y="108">node 22</text>
+<rect class="soft" height="40" rx="8" width="68" x="836" y="84"></rect>
+<text class="s m" x="870" y="108">node 24</text>
+<text class="s m" data-en="three jobs at once, same steps" x="785" y="150">एकाच वेळी तीन job, त्याच पायऱ्या</text>
+<text class="s m" data-en="fail-fast: false → all three finish" x="785" y="170">fail-fast: false → तिन्ही पूर्ण होतात</text>
+<text class="s m" data-en="even when one goes red" x="785" y="190">एखादा लाल झाला तरी</text>
+<rect class="soft" height="56" rx="12" width="880" x="30" y="232"></rect>
+<text class="s m" data-en="cache what is slow to MAKE but cheap to check (prepared/, node_modules) — not build outputs, not secrets" x="470" y="255">जे बनवायला संथ पण तपासायला स्वस्त ते cache करा (prepared/, node_modules) — build चे output नाही, secrets नाही</text>
+<text class="s m" data-en="changing prepare.js → new hash → new key → one honest MISS, then hits again · Docker layer cache = Docker school L02" x="470" y="276">prepare.js बदलले → नवा hash → नवी key → एक प्रामाणिक MISS, मग पुन्हा hit · Docker layer cache = Docker शाळा L02</text>
+<g transform="translate(30,232)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-04-cache-parallel-matrix/lessons/04-cache-parallel-matrix/README.md"&gt;Read full lesson 04 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-04-cache-parallel-matrix/lessons/04-cache-parallel-matrix/README.md">पूर्ण धडा 04 वाचा →</a></p>
+</section>
+<!-- 05 -->
+<section class="dsec" id="l05" style="--c:#16a34a">
+<h2 data-en='&lt;span class="ln"&gt;5&lt;/span&gt; 📎 Artifacts &amp;amp; test reports — what travels between desks'><span class="ln">5</span> 📎 Artifact &amp; चाचणी अहवाल — बाकांमध्ये काय फिरते</h2>
+<p class="d" data-en="A cache speeds a job up and may vanish; an artifact is a named envelope that carries results — an image, a report card — from one desk to the next.">cache job ला वेग देते आणि नाहीशी होऊ शकते; artifact हे नाव असलेले पाकीट आहे जे निकाल — image, प्रगतिपुस्तक — एका बाकावरून पुढच्या बाकावर नेते.</p>
+<svg aria-label="The build job on machine A uploads image.tar.gz as an artifact, the push job on machine B downloads it; the JUnit report card is uploaded even when tests fail; a box contrasts cache and artifact" role="img" viewbox="0 0 940 300">
+<rect class="box" height="110" rx="12" width="250" x="30" y="50"></rect>
+<text class="t m" data-en="🍱 build job — machine A" x="155" y="80">🍱 build job — यंत्र A</text>
+<text class="s m" x="155" y="104">docker build → hello-courier:&lt;sha&gt;</text>
+<text class="s m" x="155" y="124">docker save | gzip &gt; image.tar.gz</text>
+<text class="s m" x="155" y="144">upload-artifact: name: image</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="280" x2="316" y1="105" y2="105"></line>
+<rect class="box" height="90" rx="12" width="200" x="320" y="60"></rect>
+<text class="t m" data-en="📎 the envelope" x="420" y="90">📎 पाकीट</text>
+<text class="s m" x="420" y="112">image.tar.gz</text>
+<text class="s m" x="420" y="132">retention-days: 1</text>
+<g transform="translate(320,60)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="520" x2="556" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="260" x="560" y="50"></rect>
+<text class="t m" data-en="📦 push job — machine B" x="690" y="80">📦 push job — यंत्र B</text>
+<text class="s m" x="690" y="104">download-artifact: name: image</text>
+<text class="s m" x="690" y="124">docker load &lt; image.tar.gz</text>
+<text class="s m" data-en="→ tag + push (lesson 07)" x="690" y="144">→ tag + push (धडा 07)</text>
+<g transform="translate(560,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr dash" x1="820" x2="856" y1="105" y2="105"></line>
+<text class="s m" x="885" y="100">🏦 ECR</text>
+<text class="s m" x="885" y="118">hello-courier</text>
+<rect class="box" height="90" rx="12" width="390" x="30" y="190"></rect>
+<text class="t m" data-en="📋 the report card — test-results.xml" x="225" y="218">📋 प्रगतिपुस्तक — test-results.xml</text>
+<text class="s m" x="225" y="242">node --test --test-reporter=junit</text>
+<text class="s m" data-en="upload if: always() — most useful when tests FAIL" x="225" y="262">upload if: always() — चाचण्या FAIL होतात तेव्हा सर्वात उपयोगी</text>
+<g transform="translate(30,190)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="90" rx="12" width="460" x="450" y="190"></rect>
+<text class="t m" x="680" y="218">🗄️ cache vs 📎 artifact</text>
+<text class="s m" data-en="cache = the drawer: keyed by content, may vanish, only speeds up" x="680" y="242">cache = ड्रॉवर: आशयावरून key, नाहीशी होऊ शकते, फक्त वेग देते</text>
+<text class="s m" data-en="artifact = the envelope: named, kept N days, travels between jobs" x="680" y="262">artifact = पाकीट: नाव असलेले, N दिवस जपलेले, job मध्ये फिरते</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-05-artifacts-reports/lessons/05-artifacts-reports/README.md"&gt;Read full lesson 05 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-05-artifacts-reports/lessons/05-artifacts-reports/README.md">पूर्ण धडा 05 वाचा →</a></p>
+</section>
+<!-- 06 -->
+<section class="dsec" id="l06" style="--c:#16a34a">
+<h2 data-en="&lt;span class=&quot;ln&quot;&gt;6&lt;/span&gt; 🪪 Secrets &amp;amp; least privilege — the courier's badge"><span class="ln">6</span> 🪪 Secrets &amp; least privilege — कुरिअरचा बॅज</h2>
+<p class="d" data-en="Show a signed badge, get a day pass that expires: no AWS keys in the courier's pocket, and the pass opens only the doors this repo needs.">सहीबंद बॅज दाखवा, संपणारा डे पास मिळवा: कुरिअरच्या खिशात AWS keys नाहीत, आणि पास फक्त या repo ला लागणारी दारेच उघडतो.</p>
+<svg aria-label="The push job asks GitHub for a signed OIDC badge, configure-aws-credentials shows it to AWS STS which checks the trust policy's aud and sub, and hands back temporary credentials limited to ECR push and EKS describe; a dashed box shows the bad alternative of long-lived keys" role="img" viewbox="0 0 940 300">
+<rect class="box" height="100" rx="12" width="220" x="30" y="40"></rect>
+<text class="t m" data-en="📮 the push job" x="140" y="70">📮 push job</text>
+<text class="s m" x="140" y="94">permissions: id-token: write</text>
+<text class="s m" data-en="asks GitHub for a signed 🪪 badge" x="140" y="114">GitHub कडे सहीबंद 🪪 बॅज मागतो</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="250" x2="286" y1="90" y2="90"></line>
+<rect class="box" height="100" rx="12" width="230" x="290" y="40"></rect>
+<text class="t m" x="405" y="70">🪪 configure-aws-credentials</text>
+<text class="s m" x="405" y="94">role-to-assume: vars.AWS_ROLE_ARN</text>
+<text class="s m" data-en="shows the badge to AWS STS" x="405" y="114">AWS STS ला बॅज दाखवतो</text>
+<g transform="translate(290,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="520" x2="556" y1="90" y2="90"></line>
+<rect class="box" height="125" rx="14" width="350" x="560" y="30"></rect>
+<text class="t m" data-en="☁️ AWS STS reads the trust policy" x="735" y="56">☁️ AWS STS trust policy वाचते</text>
+<text class="s m" x="735" y="80">aud = sts.amazonaws.com</text>
+<text class="s m" x="735" y="100">sub = repo:BaluRaut/learn-cicd-school:</text>
+<text class="s m" data-en="ref:refs/heads/main — only THIS repo's main" x="735" y="120">ref:refs/heads/main — फक्त याच repo ची main</text>
+<text class="s m" x="735" y="140">(iam/github-oidc-trust-policy.json)</text>
+<g transform="translate(560,30)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="735" x2="735" y1="155" y2="186"></line>
+<rect class="box" height="100" rx="12" width="350" x="560" y="190"></rect>
+<text class="t m" data-en="🎫 the day pass — temporary credentials" x="735" y="218">🎫 डे पास — तात्पुरती credentials</text>
+<text class="s m" data-en="expire in about an hour · stored nowhere" x="735" y="242">साधारण तासाभरात संपतात · कुठेच साठवलेली नाहीत</text>
+<text class="s m" data-en="may do ONLY: ecr push to hello-courier + eks describe" x="735" y="262">फक्त हेच करू शकतात: hello-courier वर ecr push + eks describe</text>
+<text class="s m" x="735" y="282">school-eks (iam/ci-role-policy.json)</text>
+<g transform="translate(560,190)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="dead" height="100" rx="12" width="490" x="30" y="190"></rect>
+<text class="t m" data-en="🔑 long-lived keys in secrets — the master key" x="275" y="218">🔑 secrets मधील दीर्घकालीन keys — मास्टर किल्ली</text>
+<text class="s m" data-en="a stored AWS_ACCESS_KEY_ID = the master key in the courier's pocket" x="275" y="242">साठवलेली AWS_ACCESS_KEY_ID = कुरिअरच्या खिशातली मास्टर किल्ली</text>
+<text class="s m" data-en="it never expires, works from anywhere, and masking only hides it in logs" x="275" y="262">ती कधीच संपत नाही, कुठूनही चालते, आणि masking फक्त log मध्ये लपवते</text>
+<text class="s m" data-en="prefer the badge: nothing to leak, nothing to rotate" x="275" y="282">बॅजला प्राधान्य द्या: गळायला काही नाही, बदलायला काही नाही</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-06-secrets-oidc/lessons/06-secrets-oidc/README.md"&gt;Read full lesson 06 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-06-secrets-oidc/lessons/06-secrets-oidc/README.md">पूर्ण धडा 06 वाचा →</a></p>
+</section>
+<!-- 07 -->
+<section class="dsec" id="l07" style="--c:#d97706">
+<h2 data-en='&lt;span class="ln"&gt;7&lt;/span&gt; 📦 Build &amp;amp; push the image — the photocopier'><span class="ln">7</span> 📦 image build &amp; push करा — फोटोकॉपी मशीन</h2>
+<p class="d" data-en="Photocopy the checked homework, prove the copy runs, label it with the commit's fingerprint, file it in the locker.">तपासलेल्या गृहपाठाची फोटोकॉपी काढा, प्रत चालते हे सिद्ध करा, commit च्या ठशाने लेबल लावा, लॉकरमध्ये फाइल करा.</p>
+<svg aria-label="docker build with the short SHA as APP_VERSION, a smoke test that runs the box and curls /healthz, a tag equal to the full commit SHA, and a push to the hello-courier ECR repository that scans on push" role="img" viewbox="0 0 940 300">
+<rect class="box" height="135" rx="12" width="190" x="30" y="50"></rect>
+<text class="t m" data-en="🍱 the photocopier" x="125" y="80">🍱 फोटोकॉपी मशीन</text>
+<text class="s m" x="125" y="104">docker build app</text>
+<text class="s m" x="125" y="124">--build-arg</text>
+<text class="s m" x="125" y="144">APP_VERSION=${GITHUB_SHA::7}</text>
+<text class="s m" x="125" y="164">-t hello-courier:&lt;full sha&gt;</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="220" x2="256" y1="118" y2="118"></line>
+<rect class="box" height="135" rx="12" width="190" x="260" y="50"></rect>
+<text class="t m" data-en="🧪 smoke-test the BOX" x="355" y="80">🧪 डब्याचीच smoke-test</text>
+<text class="s m" x="355" y="104">docker run -d -p 3000:3000</text>
+<text class="s m" x="355" y="124">curl localhost:3000/healthz</text>
+<text class="s m" x="355" y="144">grep "version &lt;short sha&gt;"</text>
+<text class="s m" x="355" y="164">docker stop smoke</text>
+<g transform="translate(260,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="450" x2="486" y1="118" y2="118"></line>
+<rect class="box" height="135" rx="12" width="190" x="490" y="50"></rect>
+<text class="t m" data-en="🏷️ label the copy" x="585" y="80">🏷️ प्रतीला लेबल लावा</text>
+<text class="s m" data-en="tag = the FULL commit SHA" x="585" y="104">tag = पूर्ण commit SHA</text>
+<text class="s m" data-en="one tag ↔ one commit" x="585" y="124">एक tag ↔ एक commit</text>
+<text class="s m" x="585" y="144">docker save → 📎 image.tar.gz</text>
+<text class="s m" data-en="(one run, two machines)" x="585" y="164">(एक run, दोन यंत्रे)</text>
+<g transform="translate(490,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="680" x2="716" y1="118" y2="118"></line>
+<rect class="box" height="135" rx="12" width="190" x="720" y="50"></rect>
+<text class="t m" data-en="🏦 the locker — ECR" x="815" y="80">🏦 लॉकर — ECR</text>
+<text class="s m" x="815" y="104">amazon-ecr-login@v2 → 🎫</text>
+<text class="s m" x="815" y="124">docker push (hello-courier)</text>
+<text class="s m" data-en="🛡️ scan on push (Docker L12)" x="815" y="144">🛡️ push वर scan (Docker L12)</text>
+<text class="s m" data-en="outputs.image → the van 🚚" x="815" y="164">outputs.image → व्हॅन 🚚</text>
+<g transform="translate(720,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="70" rx="12" width="880" x="30" y="215"></rect>
+<text class="t m" data-en="🏷️ the tag IS the version" x="470" y="241">🏷️ tag हीच आवृत्ती</text>
+<text class="s m" data-en="no :latest — yesterday's SHA stays in the locker, so rollback = redeploy that tag (lesson 09) · version label inside = short SHA" x="470" y="266">:latest नाही — कालचा SHA लॉकरमध्ये राहतो, म्हणून rollback = तो tag पुन्हा deploy (धडा 09) · आतले version label = छोटा SHA</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-07-build-push-image/lessons/07-build-push-image/README.md"&gt;Read full lesson 07 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-07-build-push-image/lessons/07-build-push-image/README.md">पूर्ण धडा 07 वाचा →</a></p>
+</section>
+<!-- 08 -->
+<section class="dsec" id="l08" style="--c:#d97706">
+<h2 data-en="&lt;span class=&quot;ln&quot;&gt;8&lt;/span&gt; 🛑 Environments &amp;amp; approval gates — the principal's signature"><span class="ln">8</span> 🛑 Environments &amp; मंजुरीचे गेट — प्राचार्यांची सही</h2>
+<p class="d" data-en="Pin the notice on the practice board first; a named person signs before it reaches the main board — and every signature is logged.">सूचना आधी सराव फलकावर लावा; मुख्य फलकावर पोहोचण्याआधी नावानिशी व्यक्ती सही करते — आणि प्रत्येक सही नोंदली जाते.</p>
+<svg aria-label="A push to main deploys to the staging environment, then the production environment's required reviewers pause the run until a person clicks Approve, then production deploys; side boxes show branch protection and the same gate in CircleCI, GitLab and Jenkins" role="img" viewbox="0 0 940 300">
+<rect class="box" height="110" rx="12" width="170" x="30" y="50"></rect>
+<text class="t m" x="115" y="82">🌿 main</text>
+<text class="s m" x="115" y="106">push → 📦 ship.yml</text>
+<text class="s m" x="115" y="126">test → build → push</text>
+<text class="s m" x="115" y="146">→ 🚚 deploy.yml</text>
+<g transform="translate(30,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<line class="arr" x1="200" x2="236" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="200" x="240" y="50"></rect>
+<text class="t m" data-en="📌 the practice board" x="340" y="82">📌 सराव फलक</text>
+<text class="s m" x="340" y="106">environment: staging</text>
+<text class="s m" x="340" y="126">kubectl apply -n staging</text>
+<text class="s m" data-en="in-cluster curl /healthz" x="340" y="146">cluster च्या आतून curl /healthz</text>
+<g transform="translate(240,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<line class="arr" x1="440" x2="476" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="210" x="480" y="50"></rect>
+<text class="t m" data-en="🛑 the principal signs" x="585" y="82">🛑 प्राचार्य सही करतात</text>
+<text class="s m" x="585" y="106">environment: production</text>
+<text class="s m" data-en="required reviewers: a named" x="585" y="126">required reviewers: नावानिशी</text>
+<text class="s m" data-en="person clicks Approve (logged)" x="585" y="146">व्यक्ती Approve क्लिक करते (नोंदले जाते)</text>
+<g transform="translate(480,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<line class="arr" x1="690" x2="726" y1="105" y2="105"></line>
+<rect class="box" height="110" rx="12" width="180" x="730" y="50"></rect>
+<text class="t m" data-en="📌 the main board" x="820" y="82">📌 मुख्य फलक</text>
+<text class="s m" x="820" y="106">environment: production</text>
+<text class="s m" x="820" y="126">kubectl apply -n production</text>
+<text class="s m" data-en="rollout status = done" x="820" y="146">rollout status = झाले</text>
+<g transform="translate(730,50)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<rect class="soft" height="90" rx="12" width="420" x="30" y="190"></rect>
+<text class="t m" data-en="🔒 before the van even leaves" x="240" y="218">🔒 व्हॅन निघण्याआधीच</text>
+<text class="s m" data-en="branch protection on main: changes arrive by pull request," x="240" y="242">main वर branch protection: बदल pull request ने येतात,</text>
+<text class="s m" data-en='required status check "test (node 22)" must be green first' x="240" y="262">required status check "test (node 22)" आधी हिरवा हवा</text>
+<g transform="translate(30,190)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<rect class="soft" height="90" rx="12" width="460" x="450" y="190"></rect>
+<text class="t m" data-en="🗣️ the same gate in four dialects" x="680" y="218">🗣️ तेच गेट चार बोलींमध्ये</text>
+<text class="s m" x="680" y="242">CircleCI: hold-for-approval · type: approval — GitLab: when: manual</text>
+<text class="s m" data-en="Jenkins: input message: 'Deploy to production?' — audit: who, when" x="680" y="262">Jenkins: input message: 'Deploy to production?' — audit: कोणी, कधी</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-08-environments-gates/lessons/08-environments-gates/README.md"&gt;Read full lesson 08 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-08-environments-gates/lessons/08-environments-gates/README.md">पूर्ण धडा 08 वाचा →</a></p>
+</section>
+<!-- 09 -->
+<section class="dsec" id="l09" style="--c:#d97706">
+<h2 data-en='&lt;span class="ln"&gt;9&lt;/span&gt; 🔁 Deploy strategies &amp;amp; rollback — replace the pins one by one'><span class="ln">9</span> 🔁 Deploy च्या पद्धती &amp; rollback — टाचण्या एक एक करून बदला</h2>
+<p class="d" data-en="Four ways to swap the notice on the board, and the boring, reliable way to put yesterday's back.">फलकावरची सूचना बदलण्याचे चार मार्ग, आणि कालची परत लावण्याचा कंटाळवाणा, भरवशाचा मार्ग.</p>
+<svg aria-label="Four strategies side by side: rolling with maxSurge 1 and maxUnavailable 0 gated by the /healthz readiness probe, recreate, blue/green flipping the Service selector, and canary; below, rollback by re-running with yesterday's SHA or rollout undo" role="img" viewbox="0 0 940 300">
+<rect class="box" height="140" rx="12" width="205" x="30" y="40"></rect>
+<text class="t m" data-en="🔁 rolling — this repo" x="132" y="70">🔁 rolling — हा repo</text>
+<text class="s m" data-en="replace the pins one by one" x="132" y="94">टाचण्या एक एक करून बदला</text>
+<text class="s m" x="132" y="116">maxSurge: 1 · maxUnavailable: 0</text>
+<text class="s m" data-en="readinessProbe /healthz gates" x="132" y="136">readinessProbe /healthz ठरवते</text>
+<text class="s m" data-en="each new pod · no planned downtime" x="132" y="156">प्रत्येक नवा pod · ठरवलेला downtime नाही</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<rect class="box" height="140" rx="12" width="205" x="255" y="40"></rect>
+<text class="t m" x="357" y="70">🔄 recreate</text>
+<text class="s m" data-en="take every pin down, then" x="357" y="94">सगळ्या टाचण्या काढा, मग</text>
+<text class="s m" data-en="put the new ones up" x="357" y="116">नव्या लावा</text>
+<text class="s m" data-en="a short downtime — fine for" x="357" y="136">थोडा downtime — चालतो</text>
+<text class="s m" data-en="jobs, dev, single-writer DBs" x="357" y="156">job, dev, single-writer DB साठी</text>
+<g transform="translate(255,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="box" height="140" rx="12" width="205" x="480" y="40"></rect>
+<text class="t m" x="582" y="70">🔵🟢 blue/green</text>
+<text class="s m" data-en="two Deployments, one is live" x="582" y="94">दोन Deployment, एक चालू</text>
+<text class="s m" data-en="flip the Service selector" x="582" y="116">Service चा selector पलटा</text>
+<text class="s m" data-en="switching back is instant" x="582" y="136">परत जाणे तत्काळ</text>
+<text class="s m" data-en="costs 2× while both run" x="582" y="156">दोन्ही चालू असताना 2× खर्च</text>
+<g transform="translate(480,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="box" height="140" rx="12" width="205" x="705" y="40"></rect>
+<text class="t m" x="807" y="70">🐤 canary</text>
+<text class="s m" data-en="show the new notice to" x="807" y="94">नवी सूचना आधी</text>
+<text class="s m" data-en="one class first" x="807" y="116">एकाच वर्गाला दाखवा</text>
+<text class="s m" data-en="small share → watch → widen" x="807" y="136">छोटा वाटा → पहा → वाढवा</text>
+<text class="s m" x="807" y="156">Route 53 weighted = AWS L23</text>
+<g transform="translate(705,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<line class="arr dash" x1="132" x2="132" y1="214" y2="184"></line>
+<rect class="soft" height="70" rx="12" width="440" x="30" y="218"></rect>
+<text class="t m" data-en="⏪ rollback — put yesterday's notice back" x="250" y="244">⏪ rollback — कालची सूचना परत लावा</text>
+<text class="s m" data-en="re-run deploy with yesterday's SHA (preferred) · or: rollout undo" x="250" y="268">कालच्या SHA ने deploy पुन्हा चालवा (पसंतीचे) · किंवा: rollout undo</text>
+<g transform="translate(30,218)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<rect class="soft" height="70" rx="12" width="410" x="500" y="218"></rect>
+<text class="t m" x="705" y="244">🚦 deploy ≠ release</text>
+<text class="s m" data-en="feature flags turn it on later · DB: expand → deploy → contract" x="705" y="268">feature flag नंतर चालू करतात · DB: expand → deploy → contract</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-09-deploy-strategies/lessons/09-deploy-strategies/README.md"&gt;Read full lesson 09 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-09-deploy-strategies/lessons/09-deploy-strategies/README.md">पूर्ण धडा 09 वाचा →</a></p>
+</section>
+<!-- 10 -->
+<section class="dsec" id="l10" style="--c:#d97706">
+<h2 data-en='&lt;span class="ln"&gt;10&lt;/span&gt; 🚚 Deploy to Kubernetes from CI — the delivery van'><span class="ln">10</span> 🚚 CI मधून Kubernetes वर deploy — डिलिव्हरी व्हॅन</h2>
+<p class="d" data-en="The van drives to school with a day pass, writes the image into the manifest, pins it, and waits until the new notice is readable.">व्हॅन डे पास घेऊन शाळेत जाते, manifest मध्ये image लिहिते, ती लावते, आणि नवी सूचना वाचनीय होईपर्यंत थांबते.</p>
+<svg aria-label="deploy.yml step by step: OIDC day pass, aws eks update-kubeconfig for school-eks, sed replaces IMAGE_PLACEHOLDER, kubectl apply into the staging namespace, rollout status as the gate and an in-cluster curl of /healthz; a dashed note warns that nobody watches the board after the van leaves" role="img" viewbox="0 0 940 330">
+<rect class="box" height="280" rx="14" width="560" x="30" y="40"></rect>
+<text class="t m" data-en="🚚 deploy.yml — the van (push model: CI holds cluster access)" x="310" y="66">🚚 deploy.yml — व्हॅन (push model: CI कडे cluster चा प्रवेश)</text>
+<g transform="translate(48,92)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<text class="s" data-en="🪪 configure-aws-credentials → the day pass (role-to-assume: vars.AWS_ROLE_ARN)" x="70" y="96">🪪 configure-aws-credentials → डे पास (role-to-assume: vars.AWS_ROLE_ARN)</text>
+<g transform="translate(48,120)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<text class="s" data-en="🗺️ aws eks update-kubeconfig --name school-eks → kubectl now knows the school" x="70" y="124">🗺️ aws eks update-kubeconfig --name school-eks → kubectl ला आता शाळा माहीत</text>
+<g transform="translate(48,148)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<text class="s" data-en="✏️ sed IMAGE_PLACEHOLDER → …/hello-courier:&amp;lt;sha&amp;gt; in k8s/deployment.yaml" x="70" y="152">✏️ sed IMAGE_PLACEHOLDER → …/hello-courier:&lt;sha&gt; k8s/deployment.yaml मध्ये</text>
+<g transform="translate(48,176)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<text class="s" data-en="📌 kubectl apply -n staging -f k8s/ — one namespace per environment" x="70" y="180">📌 kubectl apply -n staging -f k8s/ — प्रत्येक environment ला एक namespace</text>
+<g transform="translate(48,204)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<text class="s" data-en="⏳ kubectl rollout status deployment/hello-courier --timeout=180s — the gate" x="70" y="208">⏳ kubectl rollout status deployment/hello-courier --timeout=180s — गेट</text>
+<text class="s" data-en="↳ 🧪 smoke from inside: kubectl run smoke --image=curlimages/curl → /healthz" x="70" y="236">↳ 🧪 आतून smoke: kubectl run smoke --image=curlimages/curl → /healthz</text>
+<text class="s m" data-en="nicer than sed: kustomize edit set image · helm --set image.tag=&amp;lt;sha&amp;gt;" x="310" y="270">sed पेक्षा छान: kustomize edit set image · helm --set image.tag=&lt;sha&gt;</text>
+<text class="s m" data-en="production repeats the same steps after the principal signs (lesson 08)" x="310" y="294">प्राचार्यांच्या सहीनंतर production त्याच पायऱ्या पुन्हा करते (धडा 08)</text>
+<line class="arr" x1="590" x2="626" y1="95" y2="95"></line>
+<rect class="soft" height="110" rx="12" width="280" x="630" y="40"></rect>
+<text class="t m" data-en="📌 the notice board" x="770" y="68">📌 सूचना फलक</text>
+<text class="s m" x="770" y="92">Deployment hello-courier · 2 replicas</text>
+<text class="s m" data-en="readinessProbe /healthz decides when a" x="770" y="112">readinessProbe /healthz ठरवते की</text>
+<text class="s m" data-en="new pin counts as readable (K8s L07)" x="770" y="132">नवी टाचणी कधी वाचनीय गणली जाते (K8s L07)</text>
+<line class="arr dash" x1="590" x2="626" y1="255" y2="255"></line>
+<rect class="dead" height="130" rx="12" width="280" x="630" y="190"></rect>
+<text class="t m" data-en="🚧 after the van drives away…" x="770" y="220">🚧 व्हॅन निघून गेल्यावर…</text>
+<text class="s m" data-en="nobody watches the board — a manual" x="770" y="246">फलकावर कोणीच लक्ष ठेवत नाही — हाताने केलेले</text>
+<text class="s m" data-en="kubectl edit drifts silently and the" x="770" y="268">kubectl edit गुपचूप drift करते आणि</text>
+<text class="s m" data-en="push model can't see it → ArgoCD L04" x="770" y="290">push model ला ते दिसत नाही → ArgoCD L04</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-10-deploy-to-kubernetes/lessons/10-deploy-to-kubernetes/README.md"&gt;Read full lesson 10 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-10-deploy-to-kubernetes/lessons/10-deploy-to-kubernetes/README.md">पूर्ण धडा 10 वाचा →</a></p>
+</section>
+<!-- 11 -->
+<section class="dsec" id="l11" style="--c:#4f46e5">
+<h2 data-en='&lt;span class="ln"&gt;11&lt;/span&gt; 🗣️ The same pipeline in four dialects — four courier companies, one route'><span class="ln">11</span> 🗣️ तीच pipeline चार बोलींमध्ये — चार कुरिअर कंपन्या, एक मार्ग</h2>
+<p class="d" data-en="Four courier companies, one route: the forms differ, the three commands do not.">चार कुरिअर कंपन्या, एक मार्ग: फॉर्म वेगळे, तीन आज्ञा त्याच.</p>
+<svg aria-label="Four columns for GitHub Actions, CircleCI, GitLab CI and Jenkins list each dialect's trigger, job, cache, artifact and approval keywords, and all four arrows converge on one box with the same three commands" role="img" viewbox="0 0 940 330">
+<rect class="box" height="160" rx="12" width="212" x="30" y="40"></rect>
+<text class="t m" x="136" y="68">⚙️ GitHub Actions · ci.yml</text>
+<text class="s m" x="136" y="92">on: push / pull_request</text>
+<text class="s m" x="136" y="114">jobs: → runs-on: ubuntu-latest</text>
+<text class="s m" x="136" y="136">actions/cache@v4 + hashFiles()</text>
+<text class="s m" x="136" y="158">actions/upload-artifact@v4</text>
+<text class="s m" x="136" y="180">environment: required reviewers</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<rect class="box" height="160" rx="12" width="212" x="256" y="40"></rect>
+<text class="t m" x="362" y="68">🔄 CircleCI · config.yml</text>
+<text class="s m" x="362" y="92">workflows: + filters: branches</text>
+<text class="s m" x="362" y="114">jobs: → docker: cimg/node</text>
+<text class="s m" x="362" y="136">restore_cache / save_cache</text>
+<text class="s m" x="362" y="158">store_test_results</text>
+<text class="s m" x="362" y="180">hold-for-approval: type: approval</text>
+<g transform="translate(256,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="box" height="160" rx="12" width="212" x="482" y="40"></rect>
+<text class="t m" x="588" y="68">🦊 GitLab · .gitlab-ci.yml</text>
+<text class="s m" x="588" y="92">rules: if: $CI_COMMIT_BRANCH</text>
+<text class="s m" x="588" y="114">stages: [test, build, deploy]</text>
+<text class="s m" x="588" y="136">cache: key: files: [prepare.js]</text>
+<text class="s m" x="588" y="158">artifacts: reports: junit</text>
+<text class="s m" x="588" y="180">when: manual</text>
+<g transform="translate(482,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+<rect class="box" height="160" rx="12" width="212" x="708" y="40"></rect>
+<text class="t m" x="814" y="68">🎩 Jenkins · Jenkinsfile</text>
+<text class="s m" x="814" y="92">when { branch 'main' }</text>
+<text class="s m" x="814" y="114">stages { stage('✅ test') }</text>
+<text class="s m" data-en="no built-in cache (workspace)" x="814" y="136">built-in cache नाही (workspace)</text>
+<text class="s m" x="814" y="158">junit 'app/test-results.xml'</text>
+<text class="s m" x="814" y="180">input message: 'Deploy…?'</text>
+<g transform="translate(708,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">4</text></g>
+<line class="arr" x1="136" x2="300" y1="200" y2="244"></line>
+<line class="arr" x1="362" x2="410" y1="200" y2="244"></line>
+<line class="arr" x1="588" x2="530" y1="200" y2="244"></line>
+<line class="arr" x1="814" x2="640" y1="200" y2="244"></line>
+<rect class="box" height="70" rx="12" width="450" x="245" y="248"></rect>
+<text class="t m" data-en="the SAME three commands in every dialect" x="470" y="276">प्रत्येक बोलीत त्याच तीन आज्ञा</text>
+<text class="s m" x="470" y="300">node prepare.js · node --test · docker build / docker push</text>
+<g transform="translate(245,248)"><circle class="nc" r="11"></circle><text class="nt" dy="4">5</text></g>
+<text class="s m" data-en="each column, top to bottom:" x="815" y="270">प्रत्येक स्तंभ, वरून खाली:</text>
+<text class="s m" x="815" y="290">trigger · job · cache ·</text>
+<text class="s m" x="815" y="310">artifact · approval</text>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-11-four-dialects/lessons/11-four-dialects/README.md"&gt;Read full lesson 11 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-11-four-dialects/lessons/11-four-dialects/README.md">पूर्ण धडा 11 वाचा →</a></p>
+</section>
+<!-- 12 -->
+<section class="dsec" id="l12" style="--c:#4f46e5">
+<h2 data-en='&lt;span class="ln"&gt;12&lt;/span&gt; 🧹 Pipeline hygiene &amp;amp; the handoff — the rulebook poster'><span class="ln">12</span> 🧹 Pipeline ची स्वच्छता &amp; हस्तांतरण — नियमपुस्तकाचे पोस्टर</h2>
+<p class="d" data-en="The rulebook on the mailroom wall, the scoreboard everyone reads, and the baton passed to the ArgoCD school.">मेलरूमच्या भिंतीवरचे नियमपुस्तक, सगळे वाचतात तो गुणफलक, आणि ArgoCD शाळेकडे सोपवलेला दंडुका.</p>
+<svg aria-label="A rulebook poster with five hygiene rules, a DORA scoreboard with the four metrics, and a handoff arrow to the ArgoCD school where the cluster pulls, self-heals and stays drift-free" role="img" viewbox="0 0 940 300">
+<rect class="box" height="240" rx="14" width="420" x="30" y="40"></rect>
+<text class="t m" data-en="📜 the mailroom rulebook" x="240" y="68">📜 मेलरूमचे नियमपुस्तक</text>
+<g transform="translate(30,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">1</text></g>
+<text class="s" data-en="📌 pin actions, orbs and images to a SHA or digest" x="60" y="100">📌 action, orb आणि image SHA किंवा digest ला pin करा</text>
+<text class="s" data-en="🔐 least-privilege tokens — permissions: contents: read" x="60" y="128">🔐 least-privilege token — permissions: contents: read</text>
+<text class="s" data-en="🔒 protect main — pull request + required check + review" x="60" y="156">🔒 main संरक्षित करा — pull request + required check + review</text>
+<text class="s" data-en="🧪 quarantine flaky tests — retries are a smell" x="60" y="184">🧪 लहरी चाचण्या बाजूला ठेवा — retry हा दुर्गंध आहे</text>
+<text class="s" x="60" y="212">⏱️ timeout-minutes + concurrency: cancel-in-progress</text>
+<text class="s m" data-en="also: secret scanning · lockfiles · build provenance (SLSA)" x="240" y="252">शिवाय: secret scanning · lockfile · build provenance (SLSA)</text>
+<rect class="box" height="120" rx="12" width="420" x="490" y="40"></rect>
+<text class="t m" data-en="📊 the DORA scoreboard — four metrics, no vanity" x="700" y="68">📊 DORA गुणफलक — चार मापे, दिखाऊपणा नाही</text>
+<g transform="translate(490,40)"><circle class="nc" r="11"></circle><text class="nt" dy="4">2</text></g>
+<rect class="soft" height="30" rx="8" width="190" x="505" y="84"></rect>
+<text class="s m" data-en="🚀 deployment frequency" x="600" y="104">🚀 deployment ची वारंवारता</text>
+<rect class="soft" height="30" rx="8" width="190" x="705" y="84"></rect>
+<text class="s m" data-en="⏱️ lead time for changes" x="800" y="104">⏱️ बदलांचा lead time</text>
+<rect class="soft" height="30" rx="8" width="190" x="505" y="120"></rect>
+<text class="s m" x="600" y="140">💥 change failure rate</text>
+<rect class="soft" height="30" rx="8" width="190" x="705" y="120"></rect>
+<text class="s m" data-en="🩹 time to restore service" x="800" y="140">🩹 सेवा पूर्ववत करण्याचा वेळ</text>
+<line class="arr" x1="450" x2="486" y1="240" y2="240"></line>
+<rect class="box" height="90" rx="12" width="420" x="490" y="195"></rect>
+<text class="t m" data-en="🤖 the handoff — ArgoCD school, lesson 01" x="700" y="223">🤖 हस्तांतरण — ArgoCD शाळा, धडा 01</text>
+<text class="s m" data-en="a push pipeline can't see drift after delivery;" x="700" y="247">push pipeline ला delivery नंतरचा drift दिसत नाही;</text>
+<text class="s m" data-en="ArgoCD pulls from git, self-heals, keeps the board drift-free" x="700" y="267">ArgoCD git मधून pull करते, self-heal करते, फलक drift-मुक्त ठेवते</text>
+<g transform="translate(490,195)"><circle class="nc" r="11"></circle><text class="nt" dy="4">3</text></g>
+</svg>
+<p class="foot" data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-12-pipeline-hygiene/lessons/12-pipeline-hygiene/README.md"&gt;Read full lesson 12 →&lt;/a&gt;'><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-12-pipeline-hygiene/lessons/12-pipeline-hygiene/README.md">पूर्ण धडा 12 वाचा →</a></p>
+</section>
+<h2 data-en="🎓 Graduation test — can you explain this?" id="graduation">🎓 पदवी परीक्षा — हे समजावता येते का?</h2>
+<div class="callout" data-en="&lt;i&gt;A developer opens a pull request. CI runs the tests on three Node versions, reusing a cache, and uploads a JUnit report. After the merge to main, the pipeline builds the image, smoke-tests it, tags it with the commit SHA and pushes it to ECR using temporary credentials. Staging is updated automatically; a reviewer approves; production rolls out one pod at a time behind a readiness probe.&lt;/i&gt;&lt;br/&gt;
+&lt;b&gt;CI checks the change · the image is the artifact · the tag is the version · the environment is the gate · the rollout is the strategy.&lt;/b&gt; Now answer, one sentence each:"><i>एक डेव्हलपर pull request उघडतो. CI तीन Node आवृत्त्यांवर चाचण्या चालवते, cache पुन्हा वापरते आणि JUnit अहवाल upload करते. main मध्ये merge झाल्यावर pipeline image build करते, तिची smoke-test करते, commit SHA ने tag करते आणि तात्पुरत्या credentials ने ECR मध्ये push करते. Staging आपोआप अद्ययावत होते; reviewer मंजुरी देतो; production readiness probe मागे एका वेळी एक pod असे बाहेर पडते.</i><br/> <b>CI बदल तपासते · image हा artifact · tag ही आवृत्ती · environment हे गेट · rollout ही पद्धत.</b> आता उत्तर द्या, प्रत्येकी एक वाक्य:</div>
+<ol class="grad">
+<li data-en="What triggered the run, and which file listened for it?">run कशाने सुरू झाला, आणि कोणती फाइल त्यासाठी कान देऊन होती?</li><li data-en="Why did the three test jobs run in parallel?">तीन चाचणी job समांतर का चालले?</li><li data-en="What decides whether the cache is a hit?">cache hit आहे की नाही हे काय ठरवते?</li><li data-en='Where does the JUnit report go, and why "if: always()"?'>JUnit अहवाल कुठे जातो, आणि "if: always()" का?</li><li data-en="How did the push job get AWS credentials without a stored key?">push job ला साठवलेल्या key शिवाय AWS credentials कशी मिळाली?</li><li data-en="What exactly identifies the image that was deployed?">deploy झालेली image नेमकी कशाने ओळखली जाते?</li><li data-en="What made the production job wait, and where is the approval recorded?">production job ला कशाने थांबवले, आणि मंजुरी कुठे नोंदली आहे?</li><li data-en="Why did the rollout never take the service down?">rollout ने सेवा कधीच का बंद पाडली नाही?</li><li data-en="How would you roll back, and why that way?">rollback कसे कराल, आणि त्याच पद्धतीने का?</li><li data-en="What is nobody watching after the pipeline finishes — and which course fixes it?">pipeline संपल्यावर कोणीच कशावर लक्ष ठेवत नाही — आणि कोणता कोर्स ते दुरुस्त करतो?</li>
+</ol>
+<h2 data-en="☑️ Course completion checklist" id="checklist">☑️ कोर्स पूर्णत्वाची यादी</h2>
+<p class="sub" data-en="Tick honestly — &lt;b&gt;saved in this browser&lt;/b&gt;.">प्रामाणिकपणे खूण करा — <b>या ब्राउझरमध्ये जपली जाते</b>.</p>
+<div class="chk" id="chk">
+<label data-en='&lt;input data-c="c1" type="checkbox"/&gt; I can explain CI vs continuous delivery vs continuous deployment'><input data-c="c1" type="checkbox"/> मी CI vs continuous delivery vs continuous deployment समजावू शकतो</label>
+<label data-en='&lt;input data-c="c2" type="checkbox"/&gt; I can name the trigger, jobs, steps and runner in a pipeline file'><input data-c="c2" type="checkbox"/> मी pipeline फाइलमधील trigger, job, step आणि runner ओळखू शकतो</label>
+<label data-en='&lt;input data-c="c3" type="checkbox"/&gt; I have a green check on a fork of this repo'><input data-c="c3" type="checkbox"/> या repo च्या माझ्या fork वर हिरवी खूण आहे</label>
+<label data-en='&lt;input data-c="c4" type="checkbox"/&gt; I have made a pipeline red on purpose and fixed it'><input data-c="c4" type="checkbox"/> मी pipeline मुद्दाम लाल केली आणि दुरुस्त केली आहे</label>
+<label data-en='&lt;input data-c="c5" type="checkbox"/&gt; I can explain a cache key, a hit and a miss'><input data-c="c5" type="checkbox"/> मी cache key, hit आणि miss समजावू शकतो</label>
+<label data-en='&lt;input data-c="c6" type="checkbox"/&gt; I know when to use a matrix vs separate jobs'><input data-c="c6" type="checkbox"/> matrix कधी आणि वेगळे job कधी हे मला माहीत आहे</label>
+<label data-en='&lt;input data-c="c7" type="checkbox"/&gt; I can tell an artifact from a cache'><input data-c="c7" type="checkbox"/> मी artifact आणि cache मधला फरक सांगू शकतो</label>
+<label data-en='&lt;input data-c="c8" type="checkbox"/&gt; I can explain OIDC to a cloud in one breath'><input data-c="c8" type="checkbox"/> मी cloud साठी OIDC एका दमात समजावू शकतो</label>
+<label data-en='&lt;input data-c="c9" type="checkbox"/&gt; I can build, smoke-test and tag an image in CI'><input data-c="c9" type="checkbox"/> मी CI मध्ये image build, smoke-test आणि tag करू शकतो</label>
+<label data-en='&lt;input data-c="c10" type="checkbox"/&gt; I can put an approval gate in front of production'><input data-c="c10" type="checkbox"/> मी production च्या पुढे मंजुरीचे गेट ठेवू शकतो</label>
+<label data-en='&lt;input data-c="c11" type="checkbox"/&gt; I can choose between rolling, blue/green and canary'><input data-c="c11" type="checkbox"/> मी rolling, blue/green आणि canary मधून निवड करू शकतो</label>
+<label data-en='&lt;input data-c="c12" type="checkbox"/&gt; I can roll back in under a minute'><input data-c="c12" type="checkbox"/> मी एका मिनिटाच्या आत rollback करू शकतो</label>
+<label data-en='&lt;input data-c="c13" type="checkbox"/&gt; I can deploy to Kubernetes from a pipeline'><input data-c="c13" type="checkbox"/> मी pipeline मधून Kubernetes वर deploy करू शकतो</label>
+<label data-en='&lt;input data-c="c14" type="checkbox"/&gt; I can translate a pipeline between two CI systems'><input data-c="c14" type="checkbox"/> मी pipeline दोन CI प्रणालींमध्ये भाषांतरित करू शकतो</label>
+<label data-en="&lt;input data-c=&quot;c15&quot; type=&quot;checkbox&quot;/&gt; I can name DORA's four metrics and what a push pipeline can't fix"><input data-c="c15" type="checkbox"/> मी DORA ची चार मापे आणि push pipeline काय दुरुस्त करू शकत नाही हे सांगू शकतो</label>
+</div>
+<p class="sub" id="chk-count"></p>
+<style>ol.grad{margin:10px 0 0 22px;color:var(--muted)} .chk{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px 18px;margin-top:10px} .chk label{display:flex;gap:8px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px} .chk input{accent-color:#16a34a}</style>
+<script>(function(){var K="cicd-checklist",st={};try{st=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){}
+var bx=[].slice.call(document.querySelectorAll("#chk input"));function r(){var d=bx.filter(function(b){return b.checked}).length;document.getElementById("chk-count").textContent=d+" / "+bx.length+(d===bx.length?" — 🎓 done!":"")}
+bx.forEach(function(b){b.checked=!!st[b.dataset.c];b.addEventListener("change",function(){st[b.dataset.c]=b.checked;try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}r()})});r()})();</script><a class="btn" data-en="⭐ Open the repo" href="https://github.com/BaluRaut/learn-cicd-school">⭐ रेपो उघडा</a>
+<a class="btn alt" data-en="📐 All 12 lesson diagrams" href="lesson-diagrams.html">📐 सर्व 12 धड्यांच्या आकृत्या</a>
+<a class="btn alt" data-en="🗣️ Four dialects" href="pipelines.html">🗣️ चार बोली</a>
+<a class="btn alt" data-en="🧪 Quiz" href="quiz.html">🧪 प्रश्नमंजुषा</a>
+<a class="btn alt" data-en="🗓️ Study plan" href="study-plan.html">🗓️ अभ्यास योजना</a>
+<a class="btn alt" data-en="⏮️ Before &amp;amp; trade-offs" href="before-and-tradeoffs.html">⏮️ आधी काय होते &amp; फायदे-तोटे</a>
+<a class="btn alt" data-en="🤖 Next course: ArgoCD" href="https://baluraut.github.io/learn-argocd-school/">🤖 पुढचा कोर्स: ArgoCD</a>
+<footer data-en='
+    Learn CI/CD School · check it, copy it, deliver it ·
+    &lt;a href="https://github.com/BaluRaut/learn-cicd-school"&gt;github.com/BaluRaut/learn-cicd-school&lt;/a&gt; ·
+    next: &lt;a href="https://baluraut.github.io/learn-argocd-school/"&gt;learn-argocd-school&lt;/a&gt; ·
+    before: &lt;a href="https://baluraut.github.io/learn-kubernetes-school/"&gt;learn-kubernetes-school&lt;/a&gt;
+   ·
+  &lt;a href="https://baluraut.github.io/school/"&gt;🏫 all schools&lt;/a&gt;
+ ·
+  &lt;a href="https://github.com/BaluRaut/learn-cicd-school/issues"&gt;🐛 found a mistake?&lt;/a&gt;
+'>Learn CI/CD School · तपासा, कॉपी करा, पोहोचवा · <a href="https://github.com/BaluRaut/learn-cicd-school">github.com/BaluRaut/learn-cicd-school</a> · पुढे: <a href="https://baluraut.github.io/learn-argocd-school/">learn-argocd-school</a> · आधी: <a href="https://baluraut.github.io/learn-kubernetes-school/">learn-kubernetes-school</a> · <a href="https://baluraut.github.io/school/">🏫 सर्व शाळा</a> · <a href="https://github.com/BaluRaut/learn-cicd-school/issues">🐛 चूक सापडली?</a></footer>
+</div>
+
+<script id="i18n-js">
+function schoolSetLang(l){
+  try{localStorage.setItem('school-lang',l)}catch(e){}
+  document.documentElement.setAttribute('lang',l);
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(!el.hasAttribute('data-mr')) el.setAttribute('data-mr', el.innerHTML);
+    el.innerHTML = (l==='en') ? el.getAttribute('data-en') : el.getAttribute('data-mr');
+  });
+  document.querySelectorAll('[data-en-ph]').forEach(function(el){
+    if(!el.hasAttribute('data-mr-ph')) el.setAttribute('data-mr-ph', el.getAttribute('placeholder'));
+    el.setAttribute('placeholder', (l==='en') ? el.getAttribute('data-en-ph') : el.getAttribute('data-mr-ph'));
+  });
+  var p=document.getElementById('lang-pick'); if(p) p.value=l;
+}
+(function(){ var l='mr'; try{ l=localStorage.getItem('school-lang')||'mr'; }catch(e){}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){schoolSetLang(l)}); else schoolSetLang(l); })();
+</script></body>
+</html>

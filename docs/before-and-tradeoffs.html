@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="mr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title data-en="Before &amp;amp; trade-offs — Learn CI/CD School">आधी काय होते &amp; फायदे-तोटे — Learn CI/CD School</title>
+<meta content="For every big CI/CD idea: what the world looked like before it, its merits and demerits, and where to use it vs where not." name="description"/>
+<meta content="Before &amp; trade-offs — Learn CI/CD School" property="og:title"/>
+<meta content="For every big CI/CD idea: what the world looked like before it, its merits and demerits, and where to use it vs where not." property="og:description"/>
+<meta content="https://baluraut.github.io/learn-cicd-school/images/big-picture-4k.png" property="og:image"/>
+<meta content="website" property="og:type"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --muted: #475569;
+    --line: #e2e8f0; --accent: #16a34a; --ok: #16a34a; --blue: #2563eb; --bad: #dc2626;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b1220; --card: #131c2e; --ink: #e2e8f0; --muted: #94a3b8; --line: #253349; }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; }
+  .wrap { max-width:1280px; margin: 0 auto; padding: 28px 20px 60px; }
+  a { color: var(--blue); }
+  h1 { font-size: 1.9rem; line-height: 1.25; }
+  .sub { color: var(--muted); max-width: 74ch; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
+  .toc a { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 12px; font-size: .82rem; color: var(--muted); text-decoration: none; }
+  .toc a:hover { color: var(--ink); border-color: var(--muted); }
+  .term { background: var(--card); border: 1px solid var(--line); border-top: 6px solid var(--c, var(--accent)); border-radius: 16px; padding: 22px; margin-top: 26px; scroll-margin-top: 16px; }
+  .term h2 { font-size: 1.3rem; margin-bottom: 10px; }
+  .hist { background: var(--bg); border-left: 5px solid var(--c, var(--accent)); border-radius: 10px; padding: 14px 16px; margin: 10px 0 14px; }
+  .hist b { display: block; margin-bottom: 4px; }
+  .hist p { color: var(--muted); font-size: .95rem; }
+  .quad { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .q { border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .q h4 { margin-bottom: 6px; font-size: .98rem; }
+  .q ul { margin-left: 18px; color: var(--muted); font-size: .92rem; }
+  .q.merit  { border-top: 4px solid var(--ok); }
+  .q.demerit{ border-top: 4px solid var(--bad); }
+  .q.use    { border-top: 4px solid var(--blue); }
+  .q.avoid  { border-top: 4px solid #f59e0b; }
+  .foot { margin-top: 10px; font-size: .92rem; }
+  footer { margin-top: 44px; border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: .88rem; }
+
+  @media (min-width: 1660px) { .wrap { max-width: 1580px; } }
+</style>
+
+<style id="i18n-css">
+#lang-pick{position:fixed;top:10px;right:10px;z-index:9999;font:600 .85rem -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--card,#fff);color:var(--ink,#0f172a);border:1px solid var(--line,#e2e8f0);border-radius:999px;padding:6px 12px;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer}
+html[lang="mr"] body{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+html[lang="mr"] svg text{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",sans-serif}
+@media print{#lang-pick{display:none}}
+</style></head>
+<body><select aria-label="Language / भाषा" id="lang-pick" onchange="schoolSetLang(this.value)">
+<option value="mr">🇮🇳 मराठी</option><option value="en">🇬🇧 English</option></select>
+<div class="wrap">
+<header>
+<p data-en='&lt;a href="index.html"&gt;← Back to the course home&lt;/a&gt;'><a href="index.html">← कोर्सच्या मुख्य पानाकडे परत</a></p>
+<h1 data-en="⏮️ Before &amp;amp; trade-offs">⏮️ आधी काय होते &amp; फायदे-तोटे</h1>
+<p class="sub" data-en="Every tool replaced something worse — and is itself the wrong tool somewhere.
+  For each big idea in this course: what life was like &lt;b&gt;before&lt;/b&gt; it, its honest
+  &lt;b&gt;merits ✅ and demerits ❌&lt;/b&gt;, and &lt;b&gt;where to use it 👍 vs where not 👎&lt;/b&gt;.">प्रत्येक साधनाने काहीतरी वाईट गोष्ट बदलली — आणि तेच साधन कुठेतरी चुकीचे ठरते. या कोर्समधील प्रत्येक मोठ्या कल्पनेसाठी: ती येण्या<b>आधी</b> जीवन कसे होते, तिचे प्रामाणिक <b>फायदे ✅ आणि तोटे ❌</b>, आणि <b>कुठे वापरावी 👍 विरुद्ध कुठे नाही 👎</b>.</p>
+<nav class="toc" data-en='
+&lt;a href="#ci"&gt;📮 Continuous Integration&lt;/a&gt;&lt;a href="#pipelines-as-code"&gt;📜 Pipelines as code&lt;/a&gt;&lt;a href="#oidc"&gt;🪪 Short-lived credentials (OIDC)&lt;/a&gt;&lt;a href="#gates"&gt;🛑 Environments &amp;amp; approval gates&lt;/a&gt;&lt;a href="#progressive"&gt;🔁 Progressive delivery&lt;/a&gt;&lt;a href="#push"&gt;🚚 Push-model CD (vs GitOps)&lt;/a&gt;&lt;a href="#hosted"&gt;🏢 Hosted vs self-hosted CI&lt;/a&gt;
+'><a href="#ci">📮 Continuous Integration</a><a href="#pipelines-as-code">📜 कोड म्हणून pipeline</a><a href="#oidc">🪪 अल्पायुषी credentials (OIDC)</a><a href="#gates">🛑 Environments &amp; मंजुरीचे गेट</a><a href="#progressive">🔁 टप्प्याटप्प्याने delivery</a><a href="#push">🚚 Push-model CD (vs GitOps)</a><a href="#hosted">🏢 Hosted vs self-hosted CI</a></nav>
+</header>
+<section class="term" id="ci" style="--c:#16a34a">
+<h2 data-en="📮 Continuous Integration — lessons 01–05">📮 Continuous Integration — धडे 01–05</h2>
+<div class="hist"><b data-en="⏮️ Before CI">⏮️ CI च्या आधी</b>
+<p data-en="The merge-day era: everyone worked on a private copy for weeks, then integrated at the end of the term — conflicts, builds that wouldn't compile, a 'build master' who spent days gluing it together, and a printed test checklist someone forgot. Nightly builds helped; CI servers (CruiseControl 2001, Hudson/Jenkins 2005–2011) and later hosted services made check every push the normal way to work.">मर्ज-डे चे युग: प्रत्येक जण आठवडे-आठवडे स्वतःच्या खाजगी प्रतीवर काम करत असे, मग सत्राच्या शेवटी सगळे एकत्र जोडले जाई — conflict, compile न होणारे build, दिवसच्या दिवस ते चिकटवण्यात घालवणारा एक 'build master', आणि कोणीतरी विसरलेली छापील चाचणी-यादी. रात्रीच्या build ने थोडी मदत केली; CI सर्व्हर (CruiseControl 2001, Hudson/Jenkins 2005–2011) आणि नंतरच्या hosted सेवांनी प्रत्येक push तपासणे ही कामाची सामान्य पद्धत बनवली.</p>
+</div>
+<div class="quad">
+<div class="q merit"><h4 data-en="✅ Merits">✅ फायदे</h4><ul><li data-en="feedback in minutes, not weeks">आठवड्यांऐवजी मिनिटांत अभिप्राय</li><li data-en="small merges → small conflicts">छोटे merge → छोटे conflict</li><li data-en="one shared definition of done: green = mergeable">'पूर्ण झाले' ची एकच सामायिक व्याख्या: हिरवे = merge करण्यायोग्य</li><li data-en="a clean, repeatable environment for every run">प्रत्येक run साठी स्वच्छ, पुन्हा पुन्हा तसेच वातावरण</li></ul></div>
+<div class="q demerit"><h4 data-en="❌ Demerits">❌ तोटे</h4><ul><li data-en="the pipeline is code you now maintain">pipeline हा आता तुम्ही सांभाळायचा कोड आहे</li><li data-en="slow or flaky suites erode trust in the green check">संथ किंवा लहरी (flaky) चाचण्या हिरव्या खुणेवरचा विश्वास घालवतात</li><li data-en="runner minutes cost money at scale">मोठ्या प्रमाणावर runner ची मिनिटे पैसे खातात</li><li data-en="each vendor's YAML is its own dialect (lesson 11)">प्रत्येक विक्रेत्याचे YAML ही स्वतःची बोली आहे (धडा 11)</li></ul></div>
+<div class="q use"><h4 data-en="👍 Use when">👍 वापरा जेव्हा</h4><ul><li data-en="more than one person touches the code">कोडला एकापेक्षा जास्त माणसे हात लावतात</li><li data-en="anything that ships more than once">जे एकापेक्षा जास्त वेळा ship होते ते काहीही</li><li data-en="any repo with tests worth running">चालवण्यालायक चाचण्या असलेला कोणताही repo</li></ul></div>
+<div class="q avoid"><h4 data-en="👎 Think twice when">👎 दोनदा विचार करा जेव्हा</h4><ul><li data-en="a throwaway prototype">फेकून द्यायचा prototype</li><li data-en="no tests yet — write three first, then the pipeline">अजून चाचण्याच नाहीत — आधी तीन लिहा, मग pipeline</li><li data-en="a run slower than a coffee — fix speed before adding steps">एका कॉफीपेक्षा जास्त वेळ घेणारा run — आणखी पायऱ्या जोडण्याआधी वेग सुधारा</li></ul></div>
+</div>
+<p class="foot" data-en='&lt;a href="lesson-diagrams.html#l01"&gt;Diagram ↗&lt;/a&gt;'><a href="lesson-diagrams.html#l01">आकृती ↗</a></p>
+</section>
+<section class="term" id="pipelines-as-code" style="--c:#16a34a">
+<h2 data-en="📜 Pipelines as code — lessons 02, 11">📜 कोड म्हणून pipeline — धडे 02, 11</h2>
+<div class="hist"><b data-en="⏮️ Before pipelines as code">⏮️ कोड म्हणून pipeline च्या आधी</b>
+<p data-en="Build jobs were configured by clicking through a web UI on one server nobody dared upgrade; 'job 37' did something important and only Bob knew what. Jenkinsfile (2016), &lt;code&gt;.gitlab-ci.yml&lt;/code&gt;, &lt;code&gt;.circleci/config.yml&lt;/code&gt; and workflow files moved the pipeline into the repo, next to the code.">Build job एका सर्व्हरवर web UI मध्ये क्लिक करून करून बनवले जात, आणि तो सर्व्हर अपग्रेड करायची कोणाची हिंमत नसे; 'job 37' काहीतरी महत्त्वाचे करत असे आणि ते फक्त बॉबला माहीत असे. Jenkinsfile (2016), <code>.gitlab-ci.yml</code>, <code>.circleci/config.yml</code> आणि workflow फाइलींनी pipeline repo मध्ये, कोडच्या शेजारी आणली.</p>
+</div>
+<div class="quad">
+<div class="q merit"><h4 data-en="✅ Merits">✅ फायदे</h4><ul><li data-en="versioned and reviewable in pull requests">आवृत्तीबद्ध आणि pull request मध्ये review करण्याजोगे</li><li data-en="each branch carries its own pipeline">प्रत्येक branch स्वतःची pipeline घेऊन येते</li><li data-en="reproducible on a fresh server">नव्या सर्व्हरवर पुन्हा तसेच उभे करता येते</li><li data-en="diffable when something breaks">काही बिघडले की diff करता येते</li></ul></div>
+<div class="q demerit"><h4 data-en="❌ Demerits">❌ तोटे</h4><ul><li data-en="YAML sprawl and copy-paste across repos">YAML चा पसारा आणि repo-repo मध्ये copy-paste</li><li data-en="hard to run locally (act, gitlab-ci-local — imperfect)">स्थानिक पातळीवर चालवणे अवघड (act, gitlab-ci-local — अपूर्ण)</li><li data-en="logic hidden in YAML is hard to test">YAML मध्ये लपलेले logic चाचणीला अवघड</li><li data-en="dialect lock-in">बोलीत अडकणे (dialect lock-in)</li></ul></div>
+<div class="q use"><h4 data-en="👍 Use when">👍 वापरा जेव्हा</h4><ul><li data-en="always, for any pipeline more than one person relies on">नेहमी — ज्या pipeline वर एकापेक्षा जास्त माणसे अवलंबून आहेत तिच्यासाठी</li><li data-en="when 'how do we build this?' should have one answer: the file">जेव्हा 'हे आपण build कसे करतो?' ला एकच उत्तर असायला हवे: ती फाइल</li></ul></div>
+<div class="q avoid"><h4 data-en="👎 Think twice when">👎 दोनदा विचार करा जेव्हा</h4><ul><li data-en="don't write logic in YAML — call scripts or package.json so the YAML stays thin and portable">YAML मध्ये logic लिहू नका — script किंवा package.json ला हाक मारा, म्हणजे YAML पातळ आणि portable राहते</li><li data-en="a one-off script you'll run once from a laptop">लॅपटॉपवरून एकदाच चालवायची एखादी script</li></ul></div>
+</div>
+<p class="foot" data-en='&lt;a href="lesson-diagrams.html#l02"&gt;Diagram ↗&lt;/a&gt;'><a href="lesson-diagrams.html#l02">आकृती ↗</a></p>
+</section>
+<section class="term" id="oidc" style="--c:#16a34a">
+<h2 data-en="🪪 Short-lived credentials (OIDC) — lesson 06">🪪 अल्पायुषी credentials (OIDC) — धडा 06</h2>
+<div class="hist"><b data-en="⏮️ Before OIDC">⏮️ OIDC च्या आधी</b>
+<p data-en="Long-lived cloud keys pasted into CI secrets, copied into five repos, rotated rarely, and leaked through logs, forks or an old laptop — a recurring theme in public incident write-ups. OIDC federation lets the CI run present a signed identity token and receive credentials that expire in minutes.">दीर्घकालीन cloud keys CI च्या secrets मध्ये चिकटवलेल्या, पाच repo मध्ये copy केलेल्या, क्वचितच बदललेल्या, आणि log, fork किंवा जुन्या लॅपटॉपमधून गळालेल्या — सार्वजनिक घटना-अहवालांमध्ये पुन्हा पुन्हा दिसणारी गोष्ट. OIDC federation मुळे CI run सहीबंद ओळख-token दाखवते आणि काही मिनिटांत संपणारी credentials मिळवते.</p>
+</div>
+<div class="quad">
+<div class="q merit"><h4 data-en="✅ Merits">✅ फायदे</h4><ul><li data-en="nothing to leak — credentials live for one job">गळायला काहीच नाही — credentials एका job पुरती जगतात</li><li data-en="scoped to one repo/branch by the trust policy">trust policy ने एका repo/branch पुरती मर्यादित</li><li data-en="every use lands in CloudTrail with the run's identity">प्रत्येक वापर run च्या ओळखीसह CloudTrail मध्ये नोंदला जातो</li><li data-en="no rotation chores">बदलण्याची (rotation) कटकट नाही</li></ul></div>
+<div class="q demerit"><h4 data-en="❌ Demerits">❌ तोटे</h4><ul><li data-en="one-time setup per cloud account and CI vendor">प्रत्येक cloud खात्यासाठी आणि CI विक्रेत्यासाठी एकदाची उभारणी</li><li data-en="the &lt;code&gt;sub&lt;/code&gt; condition is easy to get subtly wrong (too wide = any repo can assume the role)"><code>sub</code> अट सूक्ष्मपणे चुकणे सोपे (खूप रुंद = कोणताही repo role घेऊ शकतो)</li><li data-en="some older tools still expect static keys">काही जुनी साधने अजूनही स्थिर keys अपेक्षितात</li></ul></div>
+<div class="q use"><h4 data-en="👍 Use when">👍 वापरा जेव्हा</h4><ul><li data-en="any deploy from CI to AWS, GCP or Azure (all support it)">CI मधून AWS, GCP किंवा Azure वर कोणतीही deploy (तिन्ही support करतात)</li><li data-en="the moment a key would otherwise be pasted into a secret">जेव्हा एरवी एखादी key secret मध्ये चिकटवली गेली असती तो क्षण</li></ul></div>
+<div class="q avoid"><h4 data-en="👎 Think twice when">👎 दोनदा विचार करा जेव्हा</h4><ul><li data-en="self-hosted runners already inside the cloud can use instance or pod identity instead">आधीच cloud च्या आत असलेले self-hosted runner instance किंवा pod ओळख वापरू शकतात</li><li data-en="a personal sandbox with nothing to protect — fine to start, don't graduate it">जपण्यासारखे काहीच नसलेला वैयक्तिक sandbox — सुरुवातीला ठीक, पण त्याला पदवी देऊ नका</li></ul></div>
+</div>
+<p class="foot" data-en='&lt;a href="lesson-diagrams.html#l06"&gt;Diagram ↗&lt;/a&gt;'><a href="lesson-diagrams.html#l06">आकृती ↗</a></p>
+</section>
+<section class="term" id="gates" style="--c:#d97706">
+<h2 data-en="🛑 Environments &amp;amp; approval gates — lesson 08">🛑 Environments &amp; मंजुरीचे गेट — धडा 08</h2>
+<div class="hist"><b data-en="⏮️ Before gates">⏮️ गेटच्या आधी</b>
+<p data-en="Whoever had the production password deployed; change windows lived on a shared spreadsheet; 'don't deploy on Fridays'; and nobody could say who approved what. Environments with protection rules put a named human, a staging step and an audit trail in front of production.">ज्याच्याकडे production चा पासवर्ड असे तो deploy करत असे; बदलांच्या वेळा एका सामायिक spreadsheet मध्ये असत; 'शुक्रवारी deploy करू नका'; आणि कोणी काय मंजूर केले हे कोणीच सांगू शकत नसे. संरक्षण-नियम असलेली Environments production च्या पुढे एक नावानिशी माणूस, एक staging पायरी आणि एक audit नोंद उभी करतात.</p>
+</div>
+<div class="quad">
+<div class="q merit"><h4 data-en="✅ Merits">✅ फायदे</h4><ul><li data-en="a named human accountable for each production change">प्रत्येक production बदलासाठी जबाबदार नावानिशी माणूस</li><li data-en="staging first catches the obvious">आधी staging उघड चुका पकडते</li><li data-en="the audit trail is free">audit नोंद फुकटात मिळते</li><li data-en="blast-radius control (which branches may deploy where)">स्फोटाच्या व्याप्तीवर नियंत्रण (कोणती branch कुठे deploy करू शकते)</li></ul></div>
+<div class="q demerit"><h4 data-en="❌ Demerits">❌ तोटे</h4><ul><li data-en="gates rot into rubber stamps">गेट कालांतराने नुसते शिक्के बनतात</li><li data-en="approvals queue up and stretch lead time">मंजुऱ्यांची रांग लागते आणि lead time ताणला जातो</li><li data-en="a gate that never says no is pure delay">कधीच नाही न म्हणणारे गेट म्हणजे निव्वळ विलंब</li><li data-en="humans approve badly at 2 a.m.">रात्री 2 वाजता माणसे वाईट मंजुरी देतात</li></ul></div>
+<div class="q use"><h4 data-en="👍 Use when">👍 वापरा जेव्हा</h4><ul><li data-en="production and anything regulated">production आणि नियमबद्ध (regulated) असे काहीही</li><li data-en="the first months of a new pipeline, while trust is built">नव्या pipeline चे पहिले काही महिने, विश्वास उभा राहत असताना</li></ul></div>
+<div class="q avoid"><h4 data-en="👎 Think twice when">👎 दोनदा विचार करा जेव्हा</h4><ul><li data-en="staging and dev — automate fully">staging आणि dev — पूर्ण automate करा</li><li data-en="a gate that hasn't rejected anything in months: replace it with an automated check and measure">महिनोन्महिने काहीच नाकारले नसलेले गेट: त्याच्या जागी स्वयंचलित तपासणी ठेवा आणि मोजा</li></ul></div>
+</div>
+<p class="foot" data-en='&lt;a href="lesson-diagrams.html#l08"&gt;Diagram ↗&lt;/a&gt;'><a href="lesson-diagrams.html#l08">आकृती ↗</a></p>
+</section>
+<section class="term" id="progressive" style="--c:#d97706">
+<h2 data-en="🔁 Progressive delivery — lesson 09">🔁 टप्प्याटप्प्याने delivery — धडा 09</h2>
+<div class="hist"><b data-en="⏮️ Before rolling / blue-green / canary">⏮️ rolling / blue-green / canary च्या आधी</b>
+<p data-en="'Maintenance window 02:00–04:00', big-bang deploys of everything at once, and rollbacks by restoring last week's tarball. Rolling updates, blue/green and canaries replace the pins gradually — and let you put yesterday's notice back in seconds.">'देखभालीची वेळ 02:00–04:00', सगळे एकाच वेळी deploy करणारे big-bang deploy, आणि मागच्या आठवड्याचा tarball परत ठेवून केलेले rollback. Rolling update, blue/green आणि canary टाचण्या हळूहळू बदलतात — आणि कालची सूचना काही सेकंदांत परत लावू देतात.</p>
+</div>
+<div class="quad">
+<div class="q merit"><h4 data-en="✅ Merits">✅ फायदे</h4><ul><li data-en="no downtime for users">वापरकर्त्यांसाठी downtime नाही</li><li data-en="fast rollback: flip back or redeploy the previous SHA">जलद rollback: परत पलटा किंवा आधीचा SHA पुन्हा deploy करा</li><li data-en="learn from a small slice before everyone sees it">सगळ्यांना दिसण्याआधी छोट्या तुकड्यातून शिका</li><li data-en="pairs with readiness probes so bad pods never get traffic">readiness probe सोबत जोडी जमते — बिघडलेल्या pod ला traffic मिळतच नाही</li></ul></div>
+<div class="q demerit"><h4 data-en="❌ Demerits">❌ तोटे</h4><ul><li data-en="old and new run side by side → releases must be backward compatible">जुने आणि नवे शेजारी शेजारी चालतात → release मागे-सुसंगत (backward compatible) असावी लागते</li><li data-en="blue/green needs double capacity for a while">blue/green ला काही काळ दुप्पट क्षमता लागते</li><li data-en="a canary is only as good as the metrics you watch">canary तुम्ही पाहत असलेल्या metrics इतकाच चांगला</li><li data-en="database schema changes need expand/contract discipline">database schema बदलांना expand/contract ची शिस्त लागते</li></ul></div>
+<div class="q use"><h4 data-en="👍 Use when">👍 वापरा जेव्हा</h4><ul><li data-en="user-facing services">वापरकर्त्यांसमोरच्या सेवा</li><li data-en="anything with an SLO">SLO असलेले काहीही</li><li data-en="teams that deploy often">वारंवार deploy करणारे संघ</li></ul></div>
+<div class="q avoid"><h4 data-en="👎 Think twice when">👎 दोनदा विचार करा जेव्हा</h4><ul><li data-en="batch jobs and one-shot scripts">batch job आणि एकदाच चालणाऱ्या script</li><li data-en="schema-breaking changes — migrate first">schema मोडणारे बदल — आधी migrate करा</li><li data-en="tiny internal tools where a short blip is fine">छोटी अंतर्गत साधने, जिथे क्षणभराचा खंड चालतो</li></ul></div>
+</div>
+<p class="foot" data-en='&lt;a href="lesson-diagrams.html#l09"&gt;Diagram ↗&lt;/a&gt;'><a href="lesson-diagrams.html#l09">आकृती ↗</a></p>
+</section>
+<section class="term" id="push" style="--c:#d97706">
+<h2 data-en="🚚 Push-model CD (vs GitOps) — lessons 10, 12">🚚 Push-model CD (vs GitOps) — धडे 10, 12</h2>
+<div class="hist"><b data-en="⏮️ Before any pipeline deployed">⏮️ कोणतीही pipeline deploy करण्याआधी</b>
+<p data-en="&lt;code&gt;kubectl apply&lt;/code&gt; from whichever laptop happened to hold the kubeconfig — 'works on my cluster'. A push pipeline made that repeatable: the courier drives to the cluster and applies. It is a huge upgrade, with one blind spot the ArgoCD school opens with.">ज्या लॅपटॉपकडे योगायोगाने kubeconfig असे त्यावरून <code>kubectl apply</code> — 'माझ्या cluster वर चालते'. Push pipeline ने ते पुन्हा पुन्हा करण्याजोगे केले: कुरिअर cluster पर्यंत जातो आणि apply करतो. ही मोठी सुधारणा आहे — एका आंधळ्या जागेसह, जिथून ArgoCD शाळा सुरू होते.</p>
+</div>
+<div class="quad">
+<div class="q merit"><h4 data-en="✅ Merits">✅ फायदे</h4><ul><li data-en="one tool for build and deploy">build आणि deploy साठी एकच साधन</li><li data-en="the run log is the deploy log — simple to reason about">run चा log हाच deploy चा log — समजायला सोपे</li><li data-en="works for any target: Kubernetes, VMs, Lambda, S3 sites">कोणत्याही लक्ष्यासाठी चालते: Kubernetes, VM, Lambda, S3 साइट</li></ul></div>
+<div class="q demerit"><h4 data-en="❌ Demerits">❌ तोटे</h4><ul><li data-en="the pipeline holds cluster access — a valuable target">pipeline कडे cluster चा प्रवेश असतो — मौल्यवान लक्ष्य</li><li data-en="nothing watches the cluster afterwards → drift">नंतर cluster वर कोणीच लक्ष ठेवत नाही → drift</li><li data-en="deploy state lives in CI history, not in git">deploy ची स्थिती git मध्ये नाही, CI च्या इतिहासात राहते</li><li data-en="many clusters = many kubeconfigs in CI">अनेक cluster = CI मध्ये अनेक kubeconfig</li></ul></div>
+<div class="q use"><h4 data-en="👍 Use when">👍 वापरा जेव्हा</h4><ul><li data-en="getting started">सुरुवात करताना</li><li data-en="non-Kubernetes targets">Kubernetes नसलेली लक्ष्ये</li><li data-en="a single cluster owned by one team">एका संघाच्या मालकीचा एकच cluster</li></ul></div>
+<div class="q avoid"><h4 data-en="👎 Think twice when">👎 दोनदा विचार करा जेव्हा</h4><ul><li data-en="many clusters or many teams — that's the ArgoCD school (pull, self-heal, drift-free)">अनेक cluster किंवा अनेक संघ — ती ArgoCD शाळा (pull, self-heal, drift-मुक्त)</li><li data-en="when 'who changed prod by hand?' has come up more than once">जेव्हा 'prod हाताने कोणी बदलले?' हा प्रश्न एकापेक्षा जास्त वेळा आला आहे</li></ul></div>
+</div>
+<p class="foot" data-en='&lt;a href="lesson-diagrams.html#l10"&gt;Diagram ↗&lt;/a&gt;'><a href="lesson-diagrams.html#l10">आकृती ↗</a></p>
+</section>
+<section class="term" id="hosted" style="--c:#4f46e5">
+<h2 data-en="🏢 Hosted vs self-hosted CI — lesson 11">🏢 Hosted vs self-hosted CI — धडा 11</h2>
+<div class="hist"><b data-en="⏮️ Before hosted CI">⏮️ hosted CI च्या आधी</b>
+<p data-en="One Jenkins box under a desk, upgraded never, disk full on release day. Hosted services (Travis CI 2011, CircleCI 2011, GitLab CI 2012, GitHub Actions 2019) sell the mailroom as a service; self-hosted runners let you keep the machines while the SaaS keeps the schedule.">टेबलाखाली ठेवलेला एक Jenkins बॉक्स, कधीच अपग्रेड न केलेला, release च्या दिवशी disk भरलेली. Hosted सेवा (Travis CI 2011, CircleCI 2011, GitLab CI 2012, GitHub Actions 2019) मेलरूम सेवा म्हणून विकतात; self-hosted runner मुळे यंत्रे तुमच्याकडे राहतात आणि वेळापत्रक SaaS कडे.</p>
+</div>
+<div class="quad">
+<div class="q merit"><h4 data-en="✅ Merits">✅ फायदे</h4><ul><li data-en="hosted: zero maintenance, elastic, free allowance for open source">hosted: शून्य देखभाल, लवचिक, open source साठी मोफत कोटा</li><li data-en="self-hosted: private-network access, special hardware, predictable cost at scale">self-hosted: खाजगी network चा प्रवेश, खास hardware, मोठ्या प्रमाणावर अंदाज करता येणारा खर्च</li><li data-en="the best of both: hosted control plane + self-hosted runners">दोन्हीतले उत्तम: hosted control plane + self-hosted runner</li></ul></div>
+<div class="q demerit"><h4 data-en="❌ Demerits">❌ तोटे</h4><ul><li data-en="hosted: minutes/credits bills grow, noisy neighbors, vendor limits">hosted: मिनिटे/credits ची बिले वाढतात, गोंगाट करणारे शेजारी, विक्रेत्याच्या मर्यादा</li><li data-en="self-hosted: you patch, scale and secure it">self-hosted: patch करणे, वाढवणे आणि सुरक्षित ठेवणे तुमचे काम</li><li data-en="a compromised self-hosted runner has your secrets">तडजोड झालेल्या self-hosted runner कडे तुमची secrets असतात</li></ul></div>
+<div class="q use"><h4 data-en="👍 Use when">👍 वापरा जेव्हा</h4><ul><li data-en="hosted for most teams, most of the time">बहुतेक संघांसाठी, बहुतेक वेळा hosted</li><li data-en="self-hosted runners when builds need private networks, GPUs or compliance says so">build ला खाजगी network, GPU लागत असतील किंवा compliance म्हणत असेल तेव्हा self-hosted runner</li></ul></div>
+<div class="q avoid"><h4 data-en="👎 Think twice when">👎 दोनदा विचार करा जेव्हा</h4><ul><li data-en="running your own controller (a whole Jenkins) without someone owning it">कोणी मालक नसताना स्वतःचा controller (अख्खा Jenkins) चालवणे</li><li data-en="self-hosting to 'save money' before measuring the minutes">मिनिटे मोजण्याआधी 'पैसे वाचवायला' self-hosting</li></ul></div>
+</div>
+<p class="foot" data-en='&lt;a href="lesson-diagrams.html#l11"&gt;Diagram ↗&lt;/a&gt;'><a href="lesson-diagrams.html#l11">आकृती ↗</a></p>
+</section>
+<footer data-en='
+  Learn CI/CD School ·
+  &lt;a href="index.html"&gt;Course home&lt;/a&gt; ·
+  &lt;a href="https://github.com/BaluRaut/learn-cicd-school"&gt;github.com/BaluRaut/learn-cicd-school&lt;/a&gt; ·
+  next course: &lt;a href="https://baluraut.github.io/learn-argocd-school/"&gt;ArgoCD&lt;/a&gt;
+ ·
+  &lt;a href="https://baluraut.github.io/school/"&gt;🏫 all schools&lt;/a&gt;
+ ·
+  &lt;a href="https://github.com/BaluRaut/learn-cicd-school/issues"&gt;🐛 found a mistake?&lt;/a&gt;
+'>Learn CI/CD School · <a href="index.html">कोर्स होम</a> · <a href="https://github.com/BaluRaut/learn-cicd-school">github.com/BaluRaut/learn-cicd-school</a> · पुढचा कोर्स: <a href="https://baluraut.github.io/learn-argocd-school/">ArgoCD</a> · <a href="https://baluraut.github.io/school/">🏫 सर्व शाळा</a> · <a href="https://github.com/BaluRaut/learn-cicd-school/issues">🐛 चूक सापडली?</a></footer>
+</div>
+
+<script id="i18n-js">
+function schoolSetLang(l){
+  try{localStorage.setItem('school-lang',l)}catch(e){}
+  document.documentElement.setAttribute('lang',l);
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(!el.hasAttribute('data-mr')) el.setAttribute('data-mr', el.innerHTML);
+    el.innerHTML = (l==='en') ? el.getAttribute('data-en') : el.getAttribute('data-mr');
+  });
+  document.querySelectorAll('[data-en-ph]').forEach(function(el){
+    if(!el.hasAttribute('data-mr-ph')) el.setAttribute('data-mr-ph', el.getAttribute('placeholder'));
+    el.setAttribute('placeholder', (l==='en') ? el.getAttribute('data-en-ph') : el.getAttribute('data-mr-ph'));
+  });
+  var p=document.getElementById('lang-pick'); if(p) p.value=l;
+}
+(function(){ var l='mr'; try{ l=localStorage.getItem('school-lang')||'mr'; }catch(e){}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){schoolSetLang(l)}); else schoolSetLang(l); })();
+</script></body>
+</html>

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+
+<html lang="mr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title data-en="Four dialects — 📮 CI/CD">चार बोली — 📮 CI/CD</title>
+<meta content="The same CI/CD pipeline written four times — GitHub Actions, CircleCI, GitLab CI and Jenkins — with a Rosetta table mapping every concept to each dialect's keyword." name="description"/>
+<meta content="Four dialects — 📮 CI/CD" property="og:title"/><meta content="The same CI/CD pipeline written four times — GitHub Actions, CircleCI, GitLab CI and Jenkins — with a Rosetta table mapping every concept to each dialect's keyword." property="og:description"/><meta content="https://baluraut.github.io/learn-cicd-school/images/big-picture-4k.png" property="og:image"/><meta content="website" property="og:type"/><meta content="summary_large_image" name="twitter:card"/>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --muted: #475569;
+    --line: #e2e8f0; --accent: #16a34a; --ok: #16a34a; --blue: #2563eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b1220; --card: #131c2e; --ink: #e2e8f0; --muted: #94a3b8; --line: #253349; }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; }
+  .wrap { max-width:1280px; margin: 0 auto; padding: 28px 20px 60px; }
+  a { color: var(--blue); }
+  h1 { font-size: 2rem; line-height: 1.25; }
+  h2 { font-size: 1.4rem; margin: 44px 0 6px; }
+  .sub { color: var(--muted); max-width: 74ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
+  .chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 14px; font-size: .85rem; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 16px; }
+  .lesson { background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--c, var(--accent)); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .lesson .top { display: flex; align-items: center; gap: 10px; }
+  .lesson .num { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--c, var(--accent)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; }
+  .lesson h3 { font-size: 1.02rem; line-height: 1.3; }
+  .lesson .ana { color: var(--muted); font-size: .9rem; }
+  .lesson code { font-size: .78rem; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
+  .lesson a.go { margin-top: auto; font-weight: 600; font-size: .9rem; text-decoration: none; }
+  .lesson a.go + a.go { margin-top: 0; }
+  .lesson a.go:hover { text-decoration: underline; }
+  .callout { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--ok); border-radius: 14px; padding: 18px 20px; margin-top: 16px; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: .88rem; margin-top: 12px; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; border-radius: 10px; padding: 10px 18px; text-decoration: none; font-weight: 700; margin: 14px 10px 0 0; }
+  .btn.alt { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .vs { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 16px; }
+  .vcol { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .vcol h3 { margin-bottom: 8px; }
+  .vcol ul { margin-left: 18px; color: var(--muted); font-size: .93rem; }
+  footer { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: .88rem; }
+
+  @media (min-width: 1660px) { .wrap { max-width: 1580px; } }
+</style>
+<style>
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .tab { border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:10px 10px 0 0; padding:9px 16px; font-weight:700; cursor:pointer; font-size:.92rem; }
+  .tab[aria-selected="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .panel { display:none; } .panel.on { display:block; }
+  .panel pre { margin-top:0; border-top-left-radius:0; max-height:70vh; }
+  .panel .path { font-size:.82rem; color:var(--muted); margin:8px 0 4px; }
+  table { border-collapse:collapse; width:100%; margin-top:14px; font-size:.9rem; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { background:var(--bg); font-size:.85rem; }
+  td:first-child { font-weight:600; white-space:nowrap; }
+  td code { font-size:.8rem; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:1px 5px; }
+  .tablewrap { overflow-x:auto; }
+  .callout { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--ok); border-radius: 14px; padding: 18px 20px; margin-top: 16px; }
+  footer { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: .88rem; }
+</style>
+
+<style id="i18n-css">
+#lang-pick{position:fixed;top:10px;right:10px;z-index:9999;font:600 .85rem -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--card,#fff);color:var(--ink,#0f172a);border:1px solid var(--line,#e2e8f0);border-radius:999px;padding:6px 12px;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer}
+html[lang="mr"] body{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+html[lang="mr"] svg text{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",sans-serif}
+@media print{#lang-pick{display:none}}
+</style></head><body><select aria-label="Language / भाषा" id="lang-pick" onchange="schoolSetLang(this.value)">
+<option value="mr">🇮🇳 मराठी</option><option value="en">🇬🇧 English</option></select><div class="wrap">
+<p data-en='&lt;a href="index.html"&gt;← Back to the course home&lt;/a&gt;'><a href="index.html">← कोर्सच्या मुख्य पानाकडे परत</a></p>
+<h1 data-en="🗣️ One pipeline, four dialects">🗣️ एक pipeline, चार बोली</h1>
+<p class="sub" data-en="Four courier companies, the same route, different forms. Every file below lives in the repo and
+  describes the &lt;b&gt;same&lt;/b&gt; conveyor: test on three Node versions with a cache and a JUnit report → build,
+  smoke-test and push the image tagged with the commit SHA → deploy to staging → a human approves →
+  production. Lesson 11 walks through the table; lessons 03–10 show each piece in all four.">चार कुरिअर कंपन्या, तोच मार्ग, वेगळे फॉर्म. खालची प्रत्येक फाइल repo मध्ये आहे आणि <b>त्याच</b> conveyor चे वर्णन करते: cache आणि JUnit अहवालासह तीन Node आवृत्त्यांवर चाचणी → commit SHA ने tag केलेली image build, smoke-test आणि push → staging वर deploy → माणूस मंजुरी देतो → production. धडा 11 तक्ता समजावतो; धडे 03–10 प्रत्येक तुकडा चारही बोलींमध्ये दाखवतात.</p>
+<h2 data-en="🪨 The Rosetta table" id="rosetta">🪨 Rosetta तक्ता</h2>
+<p class="sub" data-en="Read a row across and you can translate any pipeline you meet. The keywords are the ones the real files use.">एक ओळ आडवी वाचा आणि तुम्हाला भेटणारी कोणतीही pipeline भाषांतरित करता येईल. keyword खऱ्या फाइली वापरतात तेच आहेत.</p>
+<div class="tablewrap"><table>
+<tr><th data-en="Concept">संकल्पना</th><th>⚙️ GitHub Actions</th><th>🔄 CircleCI</th><th>🦊 GitLab CI</th><th>🎩 Jenkins</th></tr>
+<tr><td data-en="Config file">Config फाइल</td><td><code>.github/workflows/*.yml</code></td><td><code>.circleci/config.yml</code></td><td><code>.gitlab-ci.yml</code></td><td><code>Jenkinsfile</code></td></tr><tr><td>Trigger 🔔</td><td><code>on: push / pull_request</code></td><td data-en="every push by default; narrow with &lt;code&gt;filters:&lt;/code&gt;">default प्रत्येक push; <code>filters:</code> ने संकुचित करा</td><td data-en="every push by default; narrow with &lt;code&gt;rules: if:&lt;/code&gt;">default प्रत्येक push; <code>rules: if:</code> ने संकुचित करा</td><td data-en="every push (multibranch); narrow with &lt;code&gt;when { branch }&lt;/code&gt;">प्रत्येक push (multibranch); <code>when { branch }</code> ने संकुचित करा</td></tr><tr><td data-en="The whole run">संपूर्ण run</td><td>workflow</td><td>workflow</td><td>pipeline</td><td>pipeline</td></tr><tr><td data-en="Unit of work">कामाचे एकक</td><td>job (<code>runs-on</code>)</td><td>job (<code>docker:</code> executor)</td><td data-en="job inside a &lt;code&gt;stage&lt;/code&gt;"><code>stage</code> मधील job</td><td><code>stage</code> (+ <code>agent</code>)</td></tr><tr><td data-en="One task">एक काम</td><td><code>steps: - run:</code> / <code>uses:</code></td><td data-en="&lt;code&gt;steps: - run:&lt;/code&gt; / orb command"><code>steps: - run:</code> / orb आज्ञा</td><td data-en="one &lt;code&gt;script:&lt;/code&gt; line">एक <code>script:</code> ओळ</td><td><code>steps { sh '…' }</code></td></tr><tr><td data-en="The machine">यंत्र</td><td>runner (<code>ubuntu-latest</code>)</td><td>executor (<code>cimg/node:22.12</code>)</td><td>runner (<code>image: node:22-alpine</code>)</td><td>agent (<code>docker { image }</code>)</td></tr><tr><td>Matrix 📏</td><td><code>strategy: matrix:</code></td><td><code>matrix: parameters:</code></td><td><code>parallel: matrix:</code></td><td><code>matrix { axes { … } }</code></td></tr><tr><td>Cache 🗄️</td><td data-en="&lt;code&gt;actions/cache&lt;/code&gt; keyed by &lt;code&gt;hashFiles()&lt;/code&gt;"><code>actions/cache</code>, key <code>hashFiles()</code> ने</td><td data-en="&lt;code&gt;restore_cache&lt;/code&gt; / &lt;code&gt;save_cache&lt;/code&gt; keyed by &lt;code&gt;checksum&lt;/code&gt;"><code>restore_cache</code> / <code>save_cache</code>, key <code>checksum</code> ने</td><td><code>cache: key: files:</code></td><td data-en="none built in — persistent workspace or the Job Cacher plugin">built-in नाही — टिकणारा workspace किंवा Job Cacher plugin</td></tr><tr><td>Artifact 📎</td><td><code>upload-artifact</code> / <code>download-artifact</code></td><td><code>store_artifacts</code> / <code>persist_to_workspace</code></td><td><code>artifacts: paths:</code></td><td><code>archiveArtifacts</code> / <code>stash</code></td></tr><tr><td data-en="Test report 📋">चाचणी अहवाल 📋</td><td data-en="upload the JUnit XML as an artifact">JUnit XML artifact म्हणून upload करा</td><td><code>store_test_results</code></td><td><code>artifacts: reports: junit</code> (MR widget)</td><td data-en="&lt;code&gt;junit&lt;/code&gt; step"><code>junit</code> पायरी</td></tr><tr><td>Secrets 🔐</td><td data-en="&lt;code&gt;secrets.X&lt;/code&gt; (masked) · &lt;code&gt;vars.X&lt;/code&gt; (plain)"><code>secrets.X</code> (झाकलेले) · <code>vars.X</code> (उघड)</td><td data-en="project env vars · &lt;code&gt;context:&lt;/code&gt; per job">project env var · <code>context:</code> प्रत्येक job ला</td><td data-en="CI/CD variables (masked, protected)">CI/CD variables (झाकलेले, संरक्षित)</td><td>Credentials + <code>withCredentials</code> / <code>withAWS</code></td></tr><tr><td data-en="Cloud identity 🪪">Cloud ओळख 🪪</td><td><code>permissions: id-token: write</code> + <code>configure-aws-credentials</code></td><td><code>aws-cli/setup</code> with <code>role_arn</code></td><td><code>id_tokens:</code> + <code>assume-role-with-web-identity</code></td><td data-en="plugin or an instance role on the agent">plugin किंवा agent वरील instance role</td></tr><tr><td data-en="Only on main">फक्त main वर</td><td><code>on: push: branches: [main]</code></td><td><code>filters: branches: only: main</code></td><td><code>rules: - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH</code></td><td><code>when { branch 'main' }</code></td></tr><tr><td data-en="Approval gate 🛑">मंजुरीचे गेट 🛑</td><td><code>environment:</code> + required reviewers</td><td><code>type: approval</code></td><td><code>when: manual</code></td><td data-en="&lt;code&gt;input&lt;/code&gt; step"><code>input</code> पायरी</td></tr><tr><td>Environments</td><td><code>environment: staging / production</code></td><td data-en="contexts + approval jobs">context + approval job</td><td><code>environment: name:</code></td><td data-en="stages (plugins add more)">stage (plugin आणखी देतात)</td></tr>
+</table></div>
+<div class="callout" data-en="🧠 &lt;b&gt;Notice what does NOT change:&lt;/b&gt; all four run &lt;code&gt;node prepare.js&lt;/code&gt;, &lt;code&gt;node --test&lt;/code&gt; and
+  &lt;code&gt;docker build … &amp;amp;&amp;amp; docker push&lt;/code&gt;. Keep the logic in scripts and package.json, keep the YAML thin, and
+  switching vendors becomes a translation instead of a rewrite.">🧠 <b>काय बदलत नाही ते पहा:</b> चारही <code>node prepare.js</code>, <code>node --test</code> आणि <code>docker build … &amp;&amp; docker push</code> चालवतात. logic script आणि package.json मध्ये ठेवा, YAML पातळ ठेवा, म्हणजे विक्रेता बदलणे हे पुनर्लेखन न राहता भाषांतर होते.</div>
+<h2 data-en="📄 The four files, side by side" id="files">📄 चार फाइली, शेजारी शेजारी</h2>
+<div class="tabs" role="tablist"><button aria-selected="true" class="tab" data-tab="actions" role="tab">⚙️ GitHub Actions</button><button aria-selected="false" class="tab" data-tab="circleci" role="tab">🔄 CircleCI</button><button aria-selected="false" class="tab" data-tab="gitlab" role="tab">🦊 GitLab CI</button><button aria-selected="false" class="tab" data-tab="jenkins" role="tab">🎩 Jenkins</button></div>
+<div class="panel on" data-panel="actions" role="tabpanel"><p class="path">📄 .github/workflows/ci.yml</p><pre><code># ✅ The checking desk (lessons 03–05): runs on EVERY push and pull request.
+# Fork this repo, push a commit, and watch this go green (or red) in the Actions tab.
+name: ✅ ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read            # lesson 06: the job's own token gets the least it needs
+
+concurrency:                # a newer push cancels the older run of the same branch
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false      # lesson 04: let all three rulers finish, even if one fails
+      matrix:
+        node: [20, 22, 24]  # three rulers — the same homework checked three ways
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: 📥 checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: 🗄️ cache the slow preparation (lesson 04)
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: app/prepared
+          key: prepared-${{ hashFiles('app/prepare.js') }}   # change prepare.js → new key → miss
+
+      - name: ⏳ prepare (slow on a miss, skipped on a hit)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: node prepare.js
+
+      - name: 🧪 test
+        run: &gt;
+          node --test
+          --test-reporter=spec  --test-reporter-destination=stdout
+          --test-reporter=junit --test-reporter-destination=test-results.xml
+
+      - name: 📎 upload the report card (lesson 05)
+        if: always()          # especially when tests FAIL — that's when you need the report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-node${{ matrix.node }}
+          path: app/test-results.xml
+          retention-days: 7
+</code></pre><p class="path">📄 .github/workflows/ship.yml</p><pre><code># 📦 The photocopier (lesson 07): build the image, prove it runs, push it to ECR
+# tagged with the commit SHA — then hand it to the delivery van (deploy.yml).
+#
+# Runs on every push to main. The PUSH and DEPLOY jobs only run when the repo has the
+# variables below (Settings → Secrets and variables → Actions → Variables); a plain
+# fork stays green and simply skips them:
+#   AWS_ROLE_ARN   arn:aws:iam::123456789012:role/learn-cicd-school-ci   (iam/ shows the role)
+#   AWS_REGION     ap-south-1
+#   ECR_REPOSITORY hello-courier
+#   EKS_CLUSTER    school-eks                                            (deploy.yml only)
+name: 📦 ship
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write           # lesson 06: lets this run ask for an OIDC badge — no stored AWS keys
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: app } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node --test
+
+  build:
+    name: build &amp; smoke-test the image
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 🍱 docker build (version label = short SHA)
+        run: docker build --build-arg APP_VERSION=${GITHUB_SHA::7} -t hello-courier:${GITHUB_SHA} app
+      - name: 🧪 test the BOX, not just the code
+        run: |
+          docker run -d --rm -p 3000:3000 --name smoke hello-courier:${GITHUB_SHA}
+          for i in $(seq 1 20); do curl -fsS localhost:3000/healthz &amp;&amp; break; sleep 0.5; done
+          curl -fsS localhost:3000/ | grep -q "version ${GITHUB_SHA::7}"
+          docker stop smoke
+      - name: 💾 keep the image for the push job (same run, different machine)
+        run: docker save hello-courier:${GITHUB_SHA} | gzip &gt; image.tar.gz
+      - uses: actions/upload-artifact@v4
+        with: { name: image, path: image.tar.gz, retention-days: 1 }
+
+  push:
+    name: push to ECR
+    needs: build
+    if: vars.AWS_ROLE_ARN != ''            # skipped on forks without AWS — still green
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: image }
+      - run: docker load &lt; image.tar.gz
+
+      - name: 🪪 show the badge, get a day pass (OIDC → temporary credentials)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: 🎫 log in to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: 🏷️ tag with the commit SHA and push
+        id: meta
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
+        run: |
+          docker tag hello-courier:${GITHUB_SHA} "$IMAGE"
+          docker push "$IMAGE"
+          echo "image=$IMAGE" &gt;&gt; "$GITHUB_OUTPUT"
+
+  deploy:
+    name: 🚚 deliver
+    needs: push
+    if: vars.EKS_CLUSTER != ''
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/deploy.yml   # lesson 08–10: staging → approval → production
+    with:
+      image: ${{ needs.push.outputs.image }}
+</code></pre><p class="path">📄 .github/workflows/deploy.yml</p><pre><code># 🚚 The delivery van (lessons 08–10): staging first, then a human signs, then production.
+#
+# Called by ship.yml after a successful push, or started by hand (Actions → 🚚 deploy → Run).
+# The "production" environment must be created once in Settings → Environments with
+# "Required reviewers" — THAT checkbox is the approval gate (lesson 08). Nothing here
+# deploys until a named human clicks Approve.
+name: 🚚 deploy
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: full image reference, e.g. 123456789012.dkr.ecr.ap-south-1.amazonaws.com/hello-courier:&lt;sha&gt;
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      image:
+        description: full image reference to deploy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    environment: staging                          # the practice notice board
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with: { role-to-assume: "${{ vars.AWS_ROLE_ARN }}", aws-region: "${{ vars.AWS_REGION }}" }
+      - name: 🔧 point kubectl at the cluster
+        run: aws eks update-kubeconfig --region "${{ vars.AWS_REGION }}" --name "${{ vars.EKS_CLUSTER }}"
+      - name: 📌 pin the new notice (rolling update, lesson 09)
+        run: |
+          sed -i "s|IMAGE_PLACEHOLDER|${{ inputs.image }}|" k8s/deployment.yaml
+          kubectl apply -n staging -f k8s/
+          kubectl rollout status -n staging deployment/hello-courier --timeout=180s
+      - name: 🧪 smoke-test staging from inside the cluster
+        run: kubectl run -n staging smoke --rm -i --restart=Never --image=curlimages/curl -- -fsS http://hello-courier/healthz
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production                       # 🛑 required reviewers = the principal's signature
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with: { role-to-assume: "${{ vars.AWS_ROLE_ARN }}", aws-region: "${{ vars.AWS_REGION }}" }
+      - run: aws eks update-kubeconfig --region "${{ vars.AWS_REGION }}" --name "${{ vars.EKS_CLUSTER }}"
+      - name: 📌 roll it out to the main board
+        run: |
+          sed -i "s|IMAGE_PLACEHOLDER|${{ inputs.image }}|" k8s/deployment.yaml
+          kubectl apply -n production -f k8s/
+          kubectl rollout status -n production deployment/hello-courier --timeout=180s
+      # rollback = kubectl rollout undo deployment/hello-courier -n production   (lesson 09)
+      # …or, better, re-run this workflow with yesterday's image tag: the tag IS the version.
+</code></pre></div><div class="panel" data-panel="circleci" role="tabpanel"><p class="path">📄 .circleci/config.yml</p><pre><code># 🔄 The SAME pipeline in the CircleCI dialect (lesson 11).
+#   test (matrix) → build-and-push (context = the badge) → hold-for-approval → deploy-to-eks
+# Modeled on a real pipeline: only the jobs that talk to AWS receive the context (least privilege).
+# The context `school-cicd` must provide AWS_ROLE_ARN (OIDC) or AWS keys, AWS_ACCOUNT_ID,
+# AWS_DEFAULT_REGION, ECR_REPOSITORY, EKS_CLUSTER.
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@5.1        # `aws-cli/setup` with role_arn = OIDC, no stored keys
+
+parameters:
+  node-versions:
+    type: string
+    default: "20.18,22.12,24.0"
+
+jobs:
+  test:
+    parameters:
+      node:
+        type: string
+    docker:
+      - image: cimg/node:&lt;&lt; parameters.node &gt;&gt;
+    working_directory: ~/repo/app
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:                                        # lesson 04: the drawer
+          keys:
+            - prepared-v1-{{ checksum "prepare.js" }}
+      - run:
+          name: ⏳ prepare (skipped when restored from cache)
+          command: node prepare.js
+      - save_cache:
+          key: prepared-v1-{{ checksum "prepare.js" }}
+          paths: [prepared]
+      - run:
+          name: 🧪 test
+          command: |
+            mkdir -p test-results
+            node --test --test-reporter=spec --test-reporter-destination=stdout \
+                        --test-reporter=junit --test-reporter-destination=test-results/junit.xml
+      - store_test_results:                                   # lesson 05: the report card, parsed
+          path: test-results
+      - store_artifacts:                                      # …and the raw file, downloadable
+          path: test-results
+
+  build-and-push:
+    docker:
+      - image: cimg/aws:2024.03          # AWS CLI + Docker CLI preinstalled
+    steps:
+      - checkout
+      - setup_remote_docker              # a Docker engine for this job to build with
+      - aws-cli/setup:                   # 🪪 OIDC badge → temporary credentials
+          role_arn: ${AWS_ROLE_ARN}
+          region: ${AWS_DEFAULT_REGION}
+      - run:
+          name: 🍱 build, smoke-test, tag with the commit SHA, push
+          command: |
+            REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+            IMAGE="${REGISTRY}/${ECR_REPOSITORY}:${CIRCLE_SHA1}"
+            docker build --build-arg APP_VERSION=${CIRCLE_SHA1:0:7} -t "$IMAGE" app
+            docker run -d --rm -p 3000:3000 --name smoke "$IMAGE"
+            sleep 2 &amp;&amp; docker exec smoke wget -qO- localhost:3000/healthz &amp;&amp; docker stop smoke
+            aws ecr get-login-password --region "$AWS_DEFAULT_REGION" \
+              | docker login --username AWS --password-stdin "$REGISTRY"
+            docker push "$IMAGE"
+
+  deploy-to-eks:
+    parameters:
+      namespace:
+        type: string
+    docker:
+      - image: cimg/aws:2024.03
+    steps:
+      - checkout
+      - aws-cli/setup:
+          role_arn: ${AWS_ROLE_ARN}
+          region: ${AWS_DEFAULT_REGION}
+      - run:
+          name: 🔧 kubectl → cluster
+          command: |
+            curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            sudo install kubectl /usr/local/bin/kubectl
+            aws eks update-kubeconfig --region "$AWS_DEFAULT_REGION" --name "$EKS_CLUSTER"
+      - run:
+          name: 📌 apply and wait for the rollout
+          command: |
+            IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}:${CIRCLE_SHA1}"
+            sed -i "s|IMAGE_PLACEHOLDER|${IMAGE}|" k8s/deployment.yaml
+            kubectl apply -n &lt;&lt; parameters.namespace &gt;&gt; -f k8s/
+            kubectl rollout status -n &lt;&lt; parameters.namespace &gt;&gt; deployment/hello-courier --timeout=180s
+
+workflows:
+  test-build-deploy:
+    jobs:
+      - test:                            # NO context: tests never see cloud credentials
+          matrix:
+            parameters:
+              node: ["20.18", "22.12", "24.0"]
+      - build-and-push:
+          context: school-cicd
+          requires: [test]
+          filters:
+            branches:
+              only: main                 # only main gets built and pushed
+      - deploy-to-eks:
+          name: deploy-staging
+          namespace: staging
+          context: school-cicd
+          requires: [build-and-push]
+      - hold-for-approval:               # 🛑 the principal's signature: click Approve in the UI
+          type: approval
+          requires: [deploy-staging]
+      - deploy-to-eks:
+          name: deploy-production
+          namespace: production
+          context: school-cicd
+          requires: [hold-for-approval]
+</code></pre></div><div class="panel" data-panel="gitlab" role="tabpanel"><p class="path">📄 .gitlab-ci.yml</p><pre><code># 🦊 The SAME pipeline in the GitLab CI dialect (lesson 11).
+#   stages: test → build → deploy   (jobs in one stage run in parallel)
+# Set these CI/CD variables on the project: AWS_ROLE_ARN, AWS_REGION, AWS_ACCOUNT_ID,
+# ECR_REPOSITORY, EKS_CLUSTER. Credentials come from an ID token (OIDC) — no stored keys.
+stages: [test, build, deploy]
+
+variables:
+  AWS_REGION: ap-south-1
+
+test:
+  stage: test
+  image: node:${NODE}-alpine
+  parallel:
+    matrix:                                   # lesson 04: three rulers
+      - NODE: ["20", "22", "24"]
+  cache:                                      # lesson 04: the drawer, keyed by the file that defines the work
+    key:
+      files: [app/prepare.js]
+    paths: [app/prepared/]
+  script:
+    - cd app
+    - node prepare.js                         # prints "already exists" on a cache hit
+    - node --test --test-reporter=spec --test-reporter-destination=stdout
+                  --test-reporter=junit --test-reporter-destination=test-results.xml
+  artifacts:                                  # lesson 05: the report card — parsed into the MR widget
+    when: always
+    reports:
+      junit: app/test-results.xml
+    paths: [app/test-results.xml]
+    expire_in: 1 week
+
+.aws-badge: &amp;aws-badge                        # 🪪 OIDC: exchange GitLab's ID token for temporary AWS credentials
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    - &gt;
+      export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
+      $(aws sts assume-role-with-web-identity
+      --role-arn "$AWS_ROLE_ARN" --role-session-name "gitlab-${CI_PIPELINE_ID}"
+      --web-identity-token "$GITLAB_OIDC_TOKEN" --duration-seconds 3600
+      --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text))
+
+build-and-push:
+  stage: build
+  image: docker:27
+  services: [docker:27-dind]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH   # only the default branch gets built and pushed
+  &lt;&lt;: *aws-badge
+  script:
+    - apk add --no-cache aws-cli curl
+    - REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+    - IMAGE="${REGISTRY}/${ECR_REPOSITORY}:${CI_COMMIT_SHA}"
+    - docker build --build-arg APP_VERSION=${CI_COMMIT_SHORT_SHA} -t "$IMAGE" app
+    - docker run -d --rm -p 3000:3000 --name smoke "$IMAGE" &amp;&amp; sleep 2 &amp;&amp; docker exec smoke wget -qO- localhost:3000/healthz &amp;&amp; docker stop smoke
+    - aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$REGISTRY"
+    - docker push "$IMAGE"
+
+.deploy: &amp;deploy
+  stage: deploy
+  image: amazon/aws-cli:2.17.0
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  &lt;&lt;: *aws-badge
+  script:
+    - curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" &amp;&amp; install kubectl /usr/local/bin/kubectl
+    - aws eks update-kubeconfig --region "$AWS_REGION" --name "$EKS_CLUSTER"
+    - IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${CI_COMMIT_SHA}"
+    - sed -i "s|IMAGE_PLACEHOLDER|${IMAGE}|" k8s/deployment.yaml
+    - kubectl apply -n "$NAMESPACE" -f k8s/
+    - kubectl rollout status -n "$NAMESPACE" deployment/hello-courier --timeout=180s
+
+deploy-staging:
+  &lt;&lt;: *deploy
+  variables: { NAMESPACE: staging }
+  environment: { name: staging }
+
+deploy-production:
+  &lt;&lt;: *deploy
+  needs: [deploy-staging]
+  variables: { NAMESPACE: production }
+  environment: { name: production }
+  when: manual                                # 🛑 the principal's signature: a human presses ▶ in the UI
+</code></pre></div><div class="panel" data-panel="jenkins" role="tabpanel"><p class="path">📄 Jenkinsfile</p><pre><code>// 🎩 The SAME pipeline in the Jenkins (declarative) dialect — lesson 11.
+//   ✅ test (matrix) → 📦 build &amp; push → 🛑 approve → 🚚 deploy
+// Needs on the controller: Docker Pipeline, JUnit and Pipeline: AWS Steps plugins, plus a
+// credential `aws-school-cicd` (IAM keys or, better, a role assumed by the agent).
+pipeline {
+  agent none
+  options { timestamps(); disableConcurrentBuilds() }
+  environment {
+    AWS_REGION     = 'ap-south-1'
+    ECR_REPOSITORY = 'hello-courier'
+    EKS_CLUSTER    = 'school-eks'
+  }
+  stages {
+    stage('✅ test') {
+      matrix {                                         // lesson 04: three rulers, in parallel
+        axes { axis { name 'NODE'; values '20', '22', '24' } }
+        agent { docker { image "node:${NODE}-alpine" } }
+        stages {
+          stage('test') {
+            steps {
+              dir('app') {
+                // Jenkins has no built-in cache step: a persistent agent keeps the workspace
+                // (so prepared/ survives between builds); ephemeral agents need the Job Cacher plugin.
+                sh 'node prepare.js'
+                sh '''node --test --test-reporter=spec  --test-reporter-destination=stdout \
+                                  --test-reporter=junit --test-reporter-destination=test-results.xml'''
+              }
+            }
+            post { always { junit 'app/test-results.xml' } }   // lesson 05: the report card
+          }
+        }
+      }
+    }
+    stage('📦 build &amp; push') {
+      when { branch 'main' }
+      agent any
+      steps {
+        withAWS(credentials: 'aws-school-cicd', region: env.AWS_REGION) {
+          sh '''
+            ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+            REGISTRY="${ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+            IMAGE="${REGISTRY}/${ECR_REPOSITORY}:${GIT_COMMIT}"
+            docker build --build-arg APP_VERSION=$(echo "$GIT_COMMIT" | cut -c1-7) -t "$IMAGE" app   # POSIX sh: no ${VAR:0:7}
+            docker run -d --rm -p 3000:3000 --name smoke "$IMAGE" &amp;&amp; sleep 2 \
+              &amp;&amp; docker exec smoke wget -qO- localhost:3000/healthz &amp;&amp; docker stop smoke
+            aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$REGISTRY"
+            docker push "$IMAGE"
+          '''
+        }
+      }
+    }
+    stage('🚚 staging') {
+      when { branch 'main' }
+      agent any
+      steps { script { deployTo('staging') } }
+    }
+    stage('🛑 approve') {
+      when { branch 'main' }
+      options { timeout(time: 2, unit: 'DAYS') }
+      steps { input message: 'Deploy to production?', ok: 'Approve' }   // the principal's signature
+    }
+    stage('🚚 production') {
+      when { branch 'main' }
+      agent any
+      steps { script { deployTo('production') } }
+    }
+  }
+}
+
+def deployTo(String namespace) {
+  withAWS(credentials: 'aws-school-cicd', region: env.AWS_REGION) {
+    sh """
+      ACCOUNT=\$(aws sts get-caller-identity --query Account --output text)
+      IMAGE="\${ACCOUNT}.dkr.ecr.${env.AWS_REGION}.amazonaws.com/${env.ECR_REPOSITORY}:${env.GIT_COMMIT}"
+      aws eks update-kubeconfig --region ${env.AWS_REGION} --name ${env.EKS_CLUSTER}
+      sed -i "s|IMAGE_PLACEHOLDER|\${IMAGE}|" k8s/deployment.yaml
+      kubectl apply -n ${namespace} -f k8s/
+      kubectl rollout status -n ${namespace} deployment/hello-courier --timeout=180s
+    """
+  }
+}
+</code></pre></div>
+<footer data-en='
+  Learn CI/CD School · &lt;a href="index.html"&gt;Course home&lt;/a&gt; · &lt;a href="lesson-diagrams.html#l11"&gt;lesson 11 diagram&lt;/a&gt; ·
+  &lt;a href="https://github.com/BaluRaut/learn-cicd-school"&gt;github.com/BaluRaut/learn-cicd-school&lt;/a&gt; · &lt;a href="https://baluraut.github.io/school/"&gt;🏫 all schools&lt;/a&gt; ·
+  &lt;a href="https://github.com/BaluRaut/learn-cicd-school/issues"&gt;🐛 found a mistake?&lt;/a&gt;
+'>Learn CI/CD School · <a href="index.html">कोर्स होम</a> · <a href="lesson-diagrams.html#l11">धडा 11 ची आकृती</a> · <a href="https://github.com/BaluRaut/learn-cicd-school">github.com/BaluRaut/learn-cicd-school</a> · <a href="https://baluraut.github.io/school/">🏫 सर्व शाळा</a> · <a href="https://github.com/BaluRaut/learn-cicd-school/issues">🐛 चूक सापडली?</a></footer>
+</div>
+<script>
+(function(){
+  var KEY='cicd-dialect', tabs=[].slice.call(document.querySelectorAll('.tab')), panels=[].slice.call(document.querySelectorAll('.panel'));
+  function pick(k){ tabs.forEach(function(t){t.setAttribute('aria-selected', t.dataset.tab===k?'true':'false')}); panels.forEach(function(p){p.classList.toggle('on', p.dataset.panel===k)}); try{localStorage.setItem(KEY,k)}catch(e){} }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ pick(t.dataset.tab) }) });
+  var saved=null; try{ saved=localStorage.getItem(KEY) }catch(e){}
+  if (location.hash && document.querySelector('.tab[data-tab="'+location.hash.slice(1)+'"]')) pick(location.hash.slice(1)); else if (saved) pick(saved);
+})();
+</script>
+
+<script id="i18n-js">
+function schoolSetLang(l){
+  try{localStorage.setItem('school-lang',l)}catch(e){}
+  document.documentElement.setAttribute('lang',l);
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(!el.hasAttribute('data-mr')) el.setAttribute('data-mr', el.innerHTML);
+    el.innerHTML = (l==='en') ? el.getAttribute('data-en') : el.getAttribute('data-mr');
+  });
+  document.querySelectorAll('[data-en-ph]').forEach(function(el){
+    if(!el.hasAttribute('data-mr-ph')) el.setAttribute('data-mr-ph', el.getAttribute('placeholder'));
+    el.setAttribute('placeholder', (l==='en') ? el.getAttribute('data-en-ph') : el.getAttribute('data-mr-ph'));
+  });
+  var p=document.getElementById('lang-pick'); if(p) p.value=l;
+}
+(function(){ var l='mr'; try{ l=localStorage.getItem('school-lang')||'mr'; }catch(e){}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){schoolSetLang(l)}); else schoolSetLang(l); })();
+</script></body></html>

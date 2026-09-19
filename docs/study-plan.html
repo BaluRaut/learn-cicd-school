@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html lang="mr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title data-en="Study plan — 📮 CI/CD">अभ्यास योजना — 📮 CI/CD</title>
+<meta content="A 4-week study plan for the 📮 CI/CD school: sequence, time estimates, weekly milestones — progress saved in your browser." name="description"/>
+<meta content="Study plan — 📮 CI/CD" property="og:title"/><meta content="A 4-week study plan for the 📮 CI/CD school: sequence, time estimates, weekly milestones — progress saved in your browser." property="og:description"/><meta content="https://baluraut.github.io/learn-cicd-school/images/big-picture-4k.png" property="og:image"/><meta content="website" property="og:type"/><meta content="summary_large_image" name="twitter:card"/>
+<style>
+:root { --bg:#f8fafc; --card:#fff; --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#16a34a; --ok:#16a34a; --blue:#2563eb; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0b1220; --card:#131c2e; --ink:#e2e8f0; --muted:#94a3b8; --line:#253349; } }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; line-height:1.6; }
+.wrap { max-width:900px; margin:0 auto; padding:28px 20px 60px; }
+a { color:var(--blue); } h1 { font-size:1.9rem; } .sub { color:var(--muted); }
+.progress-box { position:sticky; top:0; z-index:10; background:var(--bg); padding:12px 0; }
+.progress-inner { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 18px; display:flex; align-items:center; gap:16px; }
+.bar { flex:1; height:12px; background:var(--line); border-radius:999px; overflow:hidden; }
+.bar > div { height:100%; width:0%; background:var(--ok); border-radius:999px; transition:width .3s; }
+#ptext { font-weight:700; white-space:nowrap; }
+.week { background:var(--card); border:1px solid var(--line); border-left:6px solid var(--c,var(--accent)); border-radius:16px; padding:20px 22px; margin-top:22px; }
+.week h2 { font-size:1.15rem; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 8px; }
+.week h2 .wk { flex:none; font-size:.8rem; font-weight:800; color:#fff; background:var(--c,var(--accent)); border-radius:999px; padding:3px 12px; }
+.lesson-row { display:flex; align-items:baseline; gap:10px; padding:7px 0; border-top:1px dashed var(--line); font-size:.95rem; }
+.lesson-row input { transform:scale(1.25); accent-color:var(--ok); flex:none; position:relative; top:2px; }
+.lesson-row .time { margin-left:auto; color:var(--muted); font-size:.85rem; white-space:nowrap; }
+.lesson-row a { text-decoration:none; font-weight:600; } .lesson-row a:hover { text-decoration:underline; }
+.milestone { margin-top:12px; background:var(--bg); border-left:4px solid var(--ok); border-radius:8px; padding:10px 14px; font-size:.92rem; }
+.milestone b { color:var(--ok); }
+#done { display:none; text-align:center; background:var(--card); border:2px solid var(--ok); border-radius:20px; padding:32px 24px; margin-top:26px; }
+footer { margin-top:44px; border-top:1px solid var(--line); padding-top:16px; color:var(--muted); font-size:.88rem; }
+</style>
+
+<style id="i18n-css">
+#lang-pick{position:fixed;top:10px;right:10px;z-index:9999;font:600 .85rem -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--card,#fff);color:var(--ink,#0f172a);border:1px solid var(--line,#e2e8f0);border-radius:999px;padding:6px 12px;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer}
+html[lang="mr"] body{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+html[lang="mr"] svg text{font-family:"Noto Sans Devanagari","Mukta","Devanagari Sangam MN","Nirmala UI",sans-serif}
+@media print{#lang-pick{display:none}}
+</style></head><body><select aria-label="Language / भाषा" id="lang-pick" onchange="schoolSetLang(this.value)">
+<option value="mr">🇮🇳 मराठी</option><option value="en">🇬🇧 English</option></select><div class="wrap">
+<p data-en='&lt;a href="index.html"&gt;← Back to the course home&lt;/a&gt;'><a href="index.html">← कोर्सच्या मुख्य पानाकडे परत</a></p>
+<h1 data-en="🗓️ Study plan — 📮 CI/CD">🗓️ अभ्यास योजना — 📮 CI/CD</h1>
+<p class="sub" data-en="12 lessons in 4 weeks (~3 sessions/week: read ~15 min + lab ~25 min).
+Tick lessons off — &lt;b&gt;progress saved in this browser&lt;/b&gt;.">12 धडे 4 आठवड्यांत (आठवड्याला ~3 सत्रे: वाचन ~15 मि. + प्रयोग ~25 मि.). धड्यांवर खूण करा — <b>प्रगती या ब्राउझरमध्ये जपली जाते</b>.</p>
+<div class="progress-box"><div class="progress-inner"><span id="ptext">0 / 12</span><div class="bar"><div id="pbar"></div></div></div></div>
+<section class="week" style="--c:#16a34a">
+<h2 data-en='&lt;span class="wk"&gt;WEEK 1&lt;/span&gt; 📮 Meet the mailroom'><span class="wk">आठवडा 1</span> 📮 मेलरूमची ओळख</h2>
+<div class="lesson-row"><input data-l="l01" id="sl01" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-01-why-cicd/lessons/01-why-cicd/README.md"&gt;01 · 📮 Why CI/CD&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl01"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-01-why-cicd/lessons/01-why-cicd/README.md">01 · 📮 CI/CD का</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l02" id="sl02" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-02-pipeline-anatomy/lessons/02-pipeline-anatomy/README.md"&gt;02 · 🧩 Anatomy of a pipeline&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl02"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-02-pipeline-anatomy/lessons/02-pipeline-anatomy/README.md">02 · 🧩 pipeline ची रचना</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l03" id="sl03" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-03-first-pipeline/lessons/03-first-pipeline/README.md"&gt;03 · ✅ Your first pipeline&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl03"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-03-first-pipeline/lessons/03-first-pipeline/README.md">03 · ✅ तुमची पहिली pipeline</a> <span class="time">~40 मि</span></label></div>
+<div class="milestone" data-en="🏁 &lt;b&gt;Checkpoint:&lt;/b&gt; fork the repo, push a commit, get a green check — then break a test on purpose and fix it.">🏁 <b>तपासणी:</b> repo fork करा, commit push करा, हिरवी खूण मिळवा — मग मुद्दाम एक चाचणी मोडा आणि दुरुस्त करा.</div>
+</section>
+<section class="week" style="--c:#16a34a">
+<h2 data-en='&lt;span class="wk"&gt;WEEK 2&lt;/span&gt; ⚡ Make it fast and safe'><span class="wk">आठवडा 2</span> ⚡ वेगवान आणि सुरक्षित करा</h2>
+<div class="lesson-row"><input data-l="l04" id="sl04" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-04-cache-parallel-matrix/lessons/04-cache-parallel-matrix/README.md"&gt;04 · ⚡ Fast pipelines&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl04"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-04-cache-parallel-matrix/lessons/04-cache-parallel-matrix/README.md">04 · ⚡ वेगवान pipeline</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l05" id="sl05" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-05-artifacts-reports/lessons/05-artifacts-reports/README.md"&gt;05 · 📎 Artifacts &amp;amp; test reports&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl05"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-05-artifacts-reports/lessons/05-artifacts-reports/README.md">05 · 📎 Artifact &amp; चाचणी अहवाल</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l06" id="sl06" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-06-secrets-oidc/lessons/06-secrets-oidc/README.md"&gt;06 · 🪪 Secrets &amp;amp; least privilege&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl06"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-06-secrets-oidc/lessons/06-secrets-oidc/README.md">06 · 🪪 Secrets &amp; least privilege</a> <span class="time">~40 मि</span></label></div>
+<div class="milestone" data-en="🏁 &lt;b&gt;Checkpoint:&lt;/b&gt; show a cache MISS then a HIT in the logs, download the JUnit report, and explain OIDC in one sentence.">🏁 <b>तपासणी:</b> log मध्ये cache MISS आणि मग HIT दाखवा, JUnit अहवाल download करा, आणि OIDC एका वाक्यात समजावा.</div>
+</section>
+<section class="week" style="--c:#d97706">
+<h2 data-en='&lt;span class="wk"&gt;WEEK 3&lt;/span&gt; 📦 Photocopy and deliver'><span class="wk">आठवडा 3</span> 📦 फोटोकॉपी करा आणि पोहोचवा</h2>
+<div class="lesson-row"><input data-l="l07" id="sl07" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-07-build-push-image/lessons/07-build-push-image/README.md"&gt;07 · 📦 Build &amp;amp; push the image&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl07"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-07-build-push-image/lessons/07-build-push-image/README.md">07 · 📦 image build &amp; push करा</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l08" id="sl08" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-08-environments-gates/lessons/08-environments-gates/README.md"&gt;08 · 🛑 Environments &amp;amp; gates&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl08"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-08-environments-gates/lessons/08-environments-gates/README.md">08 · 🛑 Environments &amp; गेट</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l09" id="sl09" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-09-deploy-strategies/lessons/09-deploy-strategies/README.md"&gt;09 · 🔁 Deploy strategies &amp;amp; rollback&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl09"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-09-deploy-strategies/lessons/09-deploy-strategies/README.md">09 · 🔁 Deploy च्या पद्धती &amp; rollback</a> <span class="time">~40 मि</span></label></div>
+<div class="milestone" data-en="🏁 &lt;b&gt;Checkpoint:&lt;/b&gt; build and smoke-test the image locally; protect main with a required check; roll a new version out on a local cluster and watch pods replace one at a time.">🏁 <b>तपासणी:</b> image स्थानिक पातळीवर build आणि smoke-test करा; required check ने main संरक्षित करा; स्थानिक cluster वर नवी आवृत्ती roll out करा आणि pod एक एक करून बदलताना पहा.</div>
+</section>
+<section class="week" style="--c:#d97706">
+<h2 data-en='&lt;span class="wk"&gt;WEEK 4&lt;/span&gt; 🚚 To production, honestly'><span class="wk">आठवडा 4</span> 🚚 production कडे, प्रामाणिकपणे</h2>
+<div class="lesson-row"><input data-l="l10" id="sl10" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-10-deploy-to-kubernetes/lessons/10-deploy-to-kubernetes/README.md"&gt;10 · 🚚 Deploy to Kubernetes from CI&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl10"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-10-deploy-to-kubernetes/lessons/10-deploy-to-kubernetes/README.md">10 · 🚚 CI मधून Kubernetes वर deploy</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l11" id="sl11" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-11-four-dialects/lessons/11-four-dialects/README.md"&gt;11 · 🗣️ The same pipeline in four dialects&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl11"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-11-four-dialects/lessons/11-four-dialects/README.md">11 · 🗣️ तीच pipeline चार बोलींमध्ये</a> <span class="time">~40 मि</span></label></div>
+<div class="lesson-row"><input data-l="l12" id="sl12" type="checkbox"/><label data-en='&lt;a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-12-pipeline-hygiene/lessons/12-pipeline-hygiene/README.md"&gt;12 · 🧹 Pipeline hygiene &amp;amp; the handoff&lt;/a&gt; &lt;span class="time"&gt;~40 min&lt;/span&gt;' for="sl12"><a href="https://github.com/BaluRaut/learn-cicd-school/blob/lesson-12-pipeline-hygiene/lessons/12-pipeline-hygiene/README.md">12 · 🧹 Pipeline ची स्वच्छता &amp; हस्तांतरण</a> <span class="time">~40 मि</span></label></div>
+<div class="milestone" data-en="🏁 &lt;b&gt;Checkpoint:&lt;/b&gt; run the four-command deploy loop end to end on a local cluster; redraw the Rosetta table from memory; name DORA's four metrics.">🏁 <b>तपासणी:</b> स्थानिक cluster वर चार-आज्ञांचा deploy loop सुरुवातीपासून शेवटपर्यंत चालवा; Rosetta तक्ता स्मरणातून पुन्हा काढा; DORA ची चार मापे सांगा.</div>
+</section>
+<div id="done"><h2 data-en="🎓 12 / 12 — school complete!">🎓 12 / 12 — शाळा पूर्ण!</h2>
+<p class="sub" data-en='Next stop: &lt;a href="https://baluraut.github.io/learn-argocd-school/"&gt;the ArgoCD school&lt;/a&gt; — and tick this school off on &lt;a href="https://baluraut.github.io/school/"&gt;the grand path&lt;/a&gt;.' style="margin-top:8px">पुढचा थांबा: <a href="https://baluraut.github.io/learn-argocd-school/">ArgoCD शाळा</a> — आणि <a href="https://baluraut.github.io/school/">मोठ्या मार्गावर</a> ही शाळा पूर्ण म्हणून खूण करा.</p></div>
+<footer data-en='Part of &lt;a href="https://baluraut.github.io/school/"&gt;🏫 The School&lt;/a&gt; · &lt;a href="index.html"&gt;course home&lt;/a&gt; · &lt;a href="quiz.html"&gt;🧪 quiz&lt;/a&gt; · &lt;a href="study-plan.html"&gt;🗓️ study plan&lt;/a&gt; ·
+  &lt;a href="https://github.com/BaluRaut/learn-cicd-school/issues"&gt;🐛 found a mistake?&lt;/a&gt;
+'><a href="https://baluraut.github.io/school/">🏫 द स्कूल</a> चा भाग · <a href="index.html">कोर्स होम</a> · <a href="quiz.html">🧪 प्रश्नमंजुषा</a> · <a href="study-plan.html">🗓️ अभ्यास योजना</a> · <a href="https://github.com/BaluRaut/learn-cicd-school/issues">🐛 चूक सापडली?</a></footer>
+</div>
+<script>
+(function() {
+  var KEY='plan-cicd-school', state={};
+  try { state=JSON.parse(localStorage.getItem(KEY)||'{}') } catch(e) {}
+  var boxes=[].slice.call(document.querySelectorAll('input[data-l]'));
+  function render() {
+    var done=boxes.filter(function(b) { return b.checked }).length;
+    document.getElementById('ptext').textContent=done+' / '+boxes.length;
+    document.getElementById('pbar').style.width=(100*done/boxes.length)+'%';
+    document.getElementById('done').style.display=done===boxes.length?'block':'none';
+  }
+  boxes.forEach(function(b) {
+    b.checked=!!state[b.dataset.l];
+    b.addEventListener('change',function() { state[b.dataset.l]=b.checked;
+      localStorage.setItem(KEY,JSON.stringify(state)); render(); });
+  });
+  render();
+})();
+</script>
+
+<script id="i18n-js">
+function schoolSetLang(l){
+  try{localStorage.setItem('school-lang',l)}catch(e){}
+  document.documentElement.setAttribute('lang',l);
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(!el.hasAttribute('data-mr')) el.setAttribute('data-mr', el.innerHTML);
+    el.innerHTML = (l==='en') ? el.getAttribute('data-en') : el.getAttribute('data-mr');
+  });
+  document.querySelectorAll('[data-en-ph]').forEach(function(el){
+    if(!el.hasAttribute('data-mr-ph')) el.setAttribute('data-mr-ph', el.getAttribute('placeholder'));
+    el.setAttribute('placeholder', (l==='en') ? el.getAttribute('data-en-ph') : el.getAttribute('data-mr-ph'));
+  });
+  var p=document.getElementById('lang-pick'); if(p) p.value=l;
+}
+(function(){ var l='mr'; try{ l=localStorage.getItem('school-lang')||'mr'; }catch(e){}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){schoolSetLang(l)}); else schoolSetLang(l); })();
+</script></body></html>

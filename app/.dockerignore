@@ -1,0 +1,6 @@
+# 🙈 what may NOT enter the lunchbox
+.git
+node_modules
+prepared
+test-results.xml
+*.test.js

@@ -1,0 +1,118 @@
+# 🔄 The SAME pipeline in the CircleCI dialect (lesson 11).
+#   test (matrix) → build-and-push (context = the badge) → hold-for-approval → deploy-to-eks
+# Modeled on a real pipeline: only the jobs that talk to AWS receive the context (least privilege).
+# The context `school-cicd` must provide AWS_ROLE_ARN (OIDC) or AWS keys, AWS_ACCOUNT_ID,
+# AWS_DEFAULT_REGION, ECR_REPOSITORY, EKS_CLUSTER.
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@5.1        # `aws-cli/setup` with role_arn = OIDC, no stored keys
+
+parameters:
+  node-versions:
+    type: string
+    default: "20.18,22.12,24.0"
+
+jobs:
+  test:
+    parameters:
+      node:
+        type: string
+    docker:
+      - image: cimg/node:<< parameters.node >>
+    working_directory: ~/repo/app
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:                                        # lesson 04: the drawer
+          keys:
+            - prepared-v1-{{ checksum "prepare.js" }}
+      - run:
+          name: ⏳ prepare (skipped when restored from cache)
+          command: node prepare.js
+      - save_cache:
+          key: prepared-v1-{{ checksum "prepare.js" }}
+          paths: [prepared]
+      - run:
+          name: 🧪 test
+          command: |
+            mkdir -p test-results
+            node --test --test-reporter=spec --test-reporter-destination=stdout \
+                        --test-reporter=junit --test-reporter-destination=test-results/junit.xml
+      - store_test_results:                                   # lesson 05: the report card, parsed
+          path: test-results
+      - store_artifacts:                                      # …and the raw file, downloadable
+          path: test-results
+
+  build-and-push:
+    docker:
+      - image: cimg/aws:2024.03          # AWS CLI + Docker CLI preinstalled
+    steps:
+      - checkout
+      - setup_remote_docker              # a Docker engine for this job to build with
+      - aws-cli/setup:                   # 🪪 OIDC badge → temporary credentials
+          role_arn: ${AWS_ROLE_ARN}
+          region: ${AWS_DEFAULT_REGION}
+      - run:
+          name: 🍱 build, smoke-test, tag with the commit SHA, push
+          command: |
+            REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+            IMAGE="${REGISTRY}/${ECR_REPOSITORY}:${CIRCLE_SHA1}"
+            docker build --build-arg APP_VERSION=${CIRCLE_SHA1:0:7} -t "$IMAGE" app
+            docker run -d --rm -p 3000:3000 --name smoke "$IMAGE"
+            sleep 2 && docker exec smoke wget -qO- localhost:3000/healthz && docker stop smoke
+            aws ecr get-login-password --region "$AWS_DEFAULT_REGION" \
+              | docker login --username AWS --password-stdin "$REGISTRY"
+            docker push "$IMAGE"
+
+  deploy-to-eks:
+    parameters:
+      namespace:
+        type: string
+    docker:
+      - image: cimg/aws:2024.03
+    steps:
+      - checkout
+      - aws-cli/setup:
+          role_arn: ${AWS_ROLE_ARN}
+          region: ${AWS_DEFAULT_REGION}
+      - run:
+          name: 🔧 kubectl → cluster
+          command: |
+            curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            sudo install kubectl /usr/local/bin/kubectl
+            aws eks update-kubeconfig --region "$AWS_DEFAULT_REGION" --name "$EKS_CLUSTER"
+      - run:
+          name: 📌 apply and wait for the rollout
+          command: |
+            IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}:${CIRCLE_SHA1}"
+            sed -i "s|IMAGE_PLACEHOLDER|${IMAGE}|" k8s/deployment.yaml
+            kubectl apply -n << parameters.namespace >> -f k8s/
+            kubectl rollout status -n << parameters.namespace >> deployment/hello-courier --timeout=180s
+
+workflows:
+  test-build-deploy:
+    jobs:
+      - test:                            # NO context: tests never see cloud credentials
+          matrix:
+            parameters:
+              node: ["20.18", "22.12", "24.0"]
+      - build-and-push:
+          context: school-cicd
+          requires: [test]
+          filters:
+            branches:
+              only: main                 # only main gets built and pushed
+      - deploy-to-eks:
+          name: deploy-staging
+          namespace: staging
+          context: school-cicd
+          requires: [build-and-push]
+      - hold-for-approval:               # 🛑 the principal's signature: click Approve in the UI
+          type: approval
+          requires: [deploy-staging]
+      - deploy-to-eks:
+          name: deploy-production
+          namespace: production
+          context: school-cicd
+          requires: [hold-for-approval]

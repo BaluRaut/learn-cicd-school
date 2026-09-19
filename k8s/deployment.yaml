@@ -1,0 +1,28 @@
+# ☸️ The notice board the van pins the new notice on (lessons 09–10).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-courier
+  labels: { app: hello-courier }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: hello-courier }
+  strategy:
+    type: RollingUpdate                 # lesson 09: replace the pins one at a time
+    rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }
+  template:
+    metadata:
+      labels: { app: hello-courier }
+    spec:
+      containers:
+        - name: web
+          image: IMAGE_PLACEHOLDER      # CI swaps in ACCOUNT.dkr.ecr.REGION.amazonaws.com/hello-courier:<sha>
+          ports: [{ containerPort: 3000 }]
+          readinessProbe:               # the rollout only proceeds when the new pod answers /healthz
+            httpGet: { path: /healthz, port: 3000 }
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { memory: 128Mi }

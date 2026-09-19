@@ -1,0 +1,37 @@
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --muted: #475569;
+    --line: #e2e8f0; --accent: #16a34a; --ok: #16a34a; --blue: #2563eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b1220; --card: #131c2e; --ink: #e2e8f0; --muted: #94a3b8; --line: #253349; }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; }
+  .wrap { max-width:1280px; margin: 0 auto; padding: 28px 20px 60px; }
+  a { color: var(--blue); }
+  h1 { font-size: 1.9rem; line-height: 1.25; }
+  .sub { color: var(--muted); max-width: 74ch; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
+  .toc a { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 12px; font-size: .82rem; color: var(--muted); text-decoration: none; }
+  .toc a:hover { color: var(--ink); border-color: var(--muted); }
+  .dsec { background: var(--card); border: 1px solid var(--line); border-top: 6px solid var(--c, var(--accent)); border-radius: 16px; padding: 22px 22px 16px; margin-top: 26px; scroll-margin-top: 16px; }
+  .dsec h2 { font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
+  .dsec h2 .ln { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--c, var(--accent)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: .95rem; font-weight: 800; }
+  .dsec p.d { color: var(--muted); font-size: .95rem; margin: 6px 0 4px; }
+  .dsec svg { width: 100%; height: auto; display: block; margin-top: 10px; }
+  .dsec .foot { margin-top: 8px; font-size: .92rem; }
+  .box  { fill: var(--card); stroke: var(--c, var(--accent)); stroke-width: 2; }
+  .soft { fill: var(--bg);  stroke: var(--line); stroke-width: 1.5; }
+  .dead { fill: var(--bg);  stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 6 5; }
+  .t  { font: 600 14px -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
+  .s  { font: 12px -apple-system, "Segoe UI", sans-serif; fill: var(--muted); }
+  .m  { text-anchor: middle; }
+  .arr  { stroke: #64748b; stroke-width: 2; fill: none; marker-end: url(#arw); }
+  .dash { stroke-dasharray: 6 5; }
+  .nc { fill: var(--c, var(--accent)); }
+  .nt { font: 700 12px -apple-system, sans-serif; fill: #fff; text-anchor: middle; }
+  footer { margin-top: 44px; border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: .88rem; }
+
+  @media (min-width: 1660px) { .wrap { max-width: 1580px; } }
+</style>

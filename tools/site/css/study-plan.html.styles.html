@@ -1,0 +1,24 @@
+<style>
+:root { --bg:#f8fafc; --card:#fff; --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#16a34a; --ok:#16a34a; --blue:#2563eb; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0b1220; --card:#131c2e; --ink:#e2e8f0; --muted:#94a3b8; --line:#253349; } }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; line-height:1.6; }
+.wrap { max-width:900px; margin:0 auto; padding:28px 20px 60px; }
+a { color:var(--blue); } h1 { font-size:1.9rem; } .sub { color:var(--muted); }
+.progress-box { position:sticky; top:0; z-index:10; background:var(--bg); padding:12px 0; }
+.progress-inner { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 18px; display:flex; align-items:center; gap:16px; }
+.bar { flex:1; height:12px; background:var(--line); border-radius:999px; overflow:hidden; }
+.bar > div { height:100%; width:0%; background:var(--ok); border-radius:999px; transition:width .3s; }
+#ptext { font-weight:700; white-space:nowrap; }
+.week { background:var(--card); border:1px solid var(--line); border-left:6px solid var(--c,var(--accent)); border-radius:16px; padding:20px 22px; margin-top:22px; }
+.week h2 { font-size:1.15rem; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 8px; }
+.week h2 .wk { flex:none; font-size:.8rem; font-weight:800; color:#fff; background:var(--c,var(--accent)); border-radius:999px; padding:3px 12px; }
+.lesson-row { display:flex; align-items:baseline; gap:10px; padding:7px 0; border-top:1px dashed var(--line); font-size:.95rem; }
+.lesson-row input { transform:scale(1.25); accent-color:var(--ok); flex:none; position:relative; top:2px; }
+.lesson-row .time { margin-left:auto; color:var(--muted); font-size:.85rem; white-space:nowrap; }
+.lesson-row a { text-decoration:none; font-weight:600; } .lesson-row a:hover { text-decoration:underline; }
+.milestone { margin-top:12px; background:var(--bg); border-left:4px solid var(--ok); border-radius:8px; padding:10px 14px; font-size:.92rem; }
+.milestone b { color:var(--ok); }
+#done { display:none; text-align:center; background:var(--card); border:2px solid var(--ok); border-radius:20px; padding:32px 24px; margin-top:26px; }
+footer { margin-top:44px; border-top:1px solid var(--line); padding-top:16px; color:var(--muted); font-size:.88rem; }
+</style>

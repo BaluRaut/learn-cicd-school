@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1560" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <style>
+    .band1 { fill: #fff; stroke: #16a34a; stroke-width: 3; }
+    .band2 { fill: #fff; stroke: #d97706; stroke-width: 3; }
+    .band3 { fill: #fff; stroke: #4f46e5; stroke-width: 3; }
+    .bx  { fill: #f8fafc; stroke: #94a3b8; stroke-width: 2; }
+    .bxg { fill: #fff; stroke: #16a34a; stroke-width: 2.5; }
+    .bxa { fill: #fff; stroke: #d97706; stroke-width: 2.5; }
+    .bxi { fill: #fff; stroke: #4f46e5; stroke-width: 2.5; }
+    .dead { fill: #f8fafc; stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 8 6; }
+    .tip  { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; }
+    .win  { fill: #fffbeb; stroke: #d97706; stroke-width: 1.5; }
+    .ind  { fill: #eef2ff; stroke: #4f46e5; stroke-width: 1.5; }
+    .title { font-size: 36px; font-weight: 800; fill: #0f172a; }
+    .bandt { font-size: 26px; font-weight: 800; }
+    .t  { font-size: 19px; font-weight: 600; fill: #0f172a; }
+    .s  { font-size: 15px; fill: #475569; }
+    .m  { text-anchor: middle; }
+    .arr  { stroke: #64748b; stroke-width: 2.5; fill: none; marker-end: url(#arw); }
+    .dash { stroke-dasharray: 8 7; }
+    .ntb { font-size: 15px; font-weight: 700; fill: #fff; text-anchor: middle; }
+  </style>
+
+  <rect x="0" y="0" width="1920" height="1560" fill="#ffffff"/>
+  <text class="title m" x="960" y="52">The Big Picture — CHECK IT, COPY IT, DELIVER IT: the school's mailroom 📮</text>
+
+  <!-- ═══ BAND 1: CHECK IT ═══ -->
+  <rect class="band1" x="40" y="80" width="1840" height="480" rx="20"/>
+  <text class="bandt" x="70" y="122" fill="#16a34a">✅ PART 1 — CHECK IT: continuous integration (lessons 1–6)</text>
+
+  <rect class="bxg" x="70" y="170" width="250" height="160" rx="14"/>
+  <text class="t m" x="195" y="205">🧑‍💻 developer</text>
+  <text class="s m" x="195" y="233">git push · pull request</text>
+  <text class="s m" x="195" y="257">🔔 the bell = the trigger</text>
+  <text class="s m" x="195" y="281">on: push / pull_request</text>
+  <text class="s m" x="195" y="305">(any branch, every time)</text>
+
+  <line class="arr" x1="320" x2="386" y1="250" y2="250"/>
+  <g transform="translate(353,232)"><circle r="13" fill="#16a34a"/><text class="ntb" dy="5">1</text></g>
+
+  <rect class="bxg" x="390" y="150" width="590" height="390" rx="14"/>
+  <text class="t m" x="685" y="185">📮 the mailroom — one run of .github/workflows/ci.yml</text>
+  <text class="s m" x="685" y="210">a fresh clerk (runner: ubuntu-latest) per job — nothing survives between jobs</text>
+  <rect class="bx" x="420" y="230" width="165" height="70" rx="10"/>
+  <text class="s m" x="502" y="258">📏 test (node 20)</text>
+  <text class="s m" x="502" y="282">node --test</text>
+  <rect class="bx" x="602" y="230" width="165" height="70" rx="10"/>
+  <text class="s m" x="684" y="258">📏 test (node 22)</text>
+  <text class="s m" x="684" y="282">node --test</text>
+  <rect class="bx" x="784" y="230" width="165" height="70" rx="10"/>
+  <text class="s m" x="866" y="258">📏 test (node 24)</text>
+  <text class="s m" x="866" y="282">node --test</text>
+  <text class="s m" x="685" y="325">matrix = three rulers on the same homework, in parallel (fail-fast: false)</text>
+  <rect class="bx" x="420" y="345" width="529" height="58" rx="10"/>
+  <text class="s m" x="685" y="368">🗄️ the drawer — cache: app/prepared keyed by hashFiles(app/prepare.js)</text>
+  <text class="s m" x="685" y="390">hit ⚡ skip the slow step · miss ⏳ node prepare.js pays the hash rounds</text>
+  <rect class="bx" x="420" y="415" width="529" height="58" rx="10"/>
+  <text class="s m" x="685" y="438">📎 the envelope — artifact: test-results.xml (JUnit), uploaded if: always()</text>
+  <text class="s m" x="685" y="460">kept for days; an artifact is an OUTPUT, a cache is only a speed-up</text>
+  <text class="s m" x="685" y="500">steps: checkout → setup-node → cache → prepare → node --test → upload-artifact</text>
+  <text class="s m" x="685" y="524">permissions: contents: read — the run's own token gets the least it needs</text>
+
+  <line class="arr" x1="980" x2="1046" y1="250" y2="250"/>
+  <g transform="translate(1013,232)"><circle r="13" fill="#16a34a"/><text class="ntb" dy="5">2</text></g>
+
+  <rect class="bxg" x="1050" y="170" width="300" height="160" rx="14"/>
+  <text class="t m" x="1200" y="205">✅ / ❌ on the commit</text>
+  <text class="s m" x="1200" y="233">green = mergeable</text>
+  <text class="s m" x="1200" y="257">red = read the log, fix, push again</text>
+  <text class="s m" x="1200" y="281">a required check blocks the merge</text>
+  <text class="s m" x="1200" y="305">(branch protection, lesson 8)</text>
+
+  <rect class="tip" x="1050" y="360" width="300" height="180" rx="14"/>
+  <text class="t m" x="1200" y="392">🪪 the courier's badge (lesson 6)</text>
+  <text class="s m" x="1200" y="420">no stored cloud keys in secrets:</text>
+  <text class="s m" x="1200" y="444">id-token: write → signed badge →</text>
+  <text class="s m" x="1200" y="468">AWS STS checks aud + sub →</text>
+  <text class="s m" x="1200" y="492">🎫 temporary credentials, one job</text>
+  <text class="s m" x="1200" y="516">trust policy = WHO · role policy = WHAT</text>
+
+  <rect class="tip" x="1400" y="150" width="450" height="390" rx="14"/>
+  <text class="t m" x="1625" y="185">🧠 the mental model</text>
+  <text class="s m" x="1625" y="218">CI = every submission is checked the day it arrives</text>
+  <text class="s m" x="1625" y="242">(term-end pile-ups are where integration hell lives)</text>
+  <text class="s m" x="1625" y="276">continuous DELIVERY = always ready to send;</text>
+  <text class="s m" x="1625" y="300">a human presses the button</text>
+  <text class="s m" x="1625" y="334">continuous DEPLOYMENT = every green change is sent;</text>
+  <text class="s m" x="1625" y="358">no button</text>
+  <text class="s m" x="1625" y="392">same conveyor, four vendors' forms (lesson 11):</text>
+  <text class="s m" x="1625" y="416">workflow · job · step · runner (GitHub Actions)</text>
+  <text class="s m" x="1625" y="440">workflow · job · step · executor (CircleCI)</text>
+  <text class="s m" x="1625" y="464">pipeline · stage/job · script · runner (GitLab CI)</text>
+  <text class="s m" x="1625" y="488">pipeline · stage · step · agent (Jenkins)</text>
+  <text class="s m" x="1625" y="522">secrets never in the log · variables are not secrets</text>
+  <g transform="translate(1400,150)"><circle r="13" fill="#16a34a"/><text class="ntb" dy="5">3</text></g>
+
+  <!-- ═══ BAND 2: DELIVER IT ═══ -->
+  <rect class="band2" x="40" y="600" width="1840" height="520" rx="20"/>
+  <text class="bandt" x="70" y="642" fill="#d97706">🚚 PART 2 — DELIVER IT: continuous delivery to Kubernetes (lessons 7–10)</text>
+
+  <rect class="bxa" x="70" y="680" width="320" height="180" rx="14"/>
+  <text class="t m" x="230" y="713">📦 the photocopier — ship.yml</text>
+  <text class="s m" x="230" y="741">only pushes on main are copied</text>
+  <text class="s m" x="230" y="765">docker build --build-arg APP_VERSION=&lt;sha7&gt;</text>
+  <text class="s m" x="230" y="789">🧪 smoke: run the BOX, curl /healthz,</text>
+  <text class="s m" x="230" y="813">grep the version — test the copy itself</text>
+  <text class="s m" x="230" y="837">💾 docker save → artifact → the push job</text>
+  <g transform="translate(70,680)"><circle r="13" fill="#d97706"/><text class="ntb" dy="5">4</text></g>
+
+  <line class="arr" x1="390" x2="456" y1="770" y2="770"/>
+
+  <rect class="bxa" x="460" y="680" width="320" height="180" rx="14"/>
+  <text class="t m" x="620" y="713">🏦 the locker — ECR hello-courier</text>
+  <text class="s m" x="620" y="741">🏷️ tag = the FULL commit SHA</text>
+  <text class="s m" x="620" y="765">immutable · traceable · the tag IS the version</text>
+  <text class="s m" x="620" y="789">log in with the day pass, push, done</text>
+  <text class="s m" x="620" y="813">🛡️ scan on push (Docker school, lesson 12)</text>
+  <text class="s m" x="620" y="837">never deploy by a moving tag like latest</text>
+
+  <line class="arr" x1="780" x2="846" y1="770" y2="770"/>
+  <g transform="translate(813,752)"><circle r="13" fill="#d97706"/><text class="ntb" dy="5">5</text></g>
+
+  <rect class="bxa" x="850" y="660" width="480" height="220" rx="14"/>
+  <text class="t m" x="1090" y="693">🚚 the delivery van — deploy.yml (push model)</text>
+  <text class="s m" x="1090" y="721">🪪 OIDC role again — the van carries no master key</text>
+  <text class="s m" x="1090" y="745">aws eks update-kubeconfig --name school-eks</text>
+  <text class="s m" x="1090" y="769">sed IMAGE_PLACEHOLDER → kubectl apply -n &lt;env&gt; -f k8s/</text>
+  <text class="s m" x="1090" y="793">kubectl rollout status --timeout=180s = the pass/fail gate</text>
+  <text class="s m" x="1090" y="817">kubectl run curl … /healthz = smoke test from inside</text>
+  <text class="s m" x="1090" y="841">one namespace per environment: staging, production</text>
+  <text class="s m" x="1090" y="865">after the van leaves nobody watches the board → ArgoCD school</text>
+
+  <line class="arr" x1="1330" x2="1396" y1="720" y2="720"/>
+  <g transform="translate(1363,702)"><circle r="13" fill="#d97706"/><text class="ntb" dy="5">6</text></g>
+
+  <rect class="bxa" x="1400" y="660" width="215" height="110" rx="14"/>
+  <text class="t m" x="1507" y="693">📋 practice board</text>
+  <text class="s m" x="1507" y="721">namespace: staging</text>
+  <text class="s m" x="1507" y="745">deploys automatically</text>
+  <rect class="bxa" x="1635" y="660" width="215" height="110" rx="14"/>
+  <text class="t m" x="1742" y="693">📌 main board</text>
+  <text class="s m" x="1742" y="721">namespace: production</text>
+  <text class="s m" x="1742" y="745">only after the signature</text>
+  <line class="arr dash" x1="1615" x2="1631" y1="715" y2="715"/>
+
+  <rect class="win" x="1400" y="790" width="450" height="90" rx="14"/>
+  <text class="t m" x="1625" y="820">🛑 the principal's signature (lesson 8)</text>
+  <text class="s m" x="1625" y="846">environment: production + required reviewers → a named</text>
+  <text class="s m" x="1625" y="868">human clicks Approve; the audit trail is free</text>
+
+  <rect class="bx" x="70" y="915" width="425" height="90" rx="12"/>
+  <text class="t m" x="282" y="945">🔁 rolling (the default here)</text>
+  <text class="s m" x="282" y="971">maxSurge 1 · maxUnavailable 0 · readiness /healthz</text>
+  <text class="s m" x="282" y="993">gates each pod — replace the pins one at a time</text>
+  <rect class="bx" x="520" y="915" width="425" height="90" rx="12"/>
+  <text class="t m" x="732" y="945">🔵🟢 blue/green</text>
+  <text class="s m" x="732" y="971">two Deployments, flip the Service selector;</text>
+  <text class="s m" x="732" y="993">instant switch back — needs double capacity</text>
+  <rect class="bx" x="970" y="915" width="425" height="90" rx="12"/>
+  <text class="t m" x="1182" y="945">🐤 canary</text>
+  <text class="s m" x="1182" y="971">a small share first (a second Deployment,</text>
+  <text class="s m" x="1182" y="993">Route 53 weighted, Argo Rollouts / Flagger)</text>
+  <rect class="win" x="1420" y="915" width="430" height="90" rx="12"/>
+  <text class="t m" x="1635" y="945">⏪ rollback (lesson 9)</text>
+  <text class="s m" x="1635" y="971">re-run the deploy with yesterday's SHA — preferred;</text>
+  <text class="s m" x="1635" y="993">kubectl rollout undo = the emergency lever</text>
+  <g transform="translate(70,915)"><circle r="13" fill="#d97706"/><text class="ntb" dy="5">7</text></g>
+  <text class="s m" x="960" y="1050">CircleCI: hold-for-approval (type: approval) · GitLab CI: when: manual + environment · Jenkins: input — the same gate, four forms</text>
+  <text class="s m" x="960" y="1080">releases must stay backward compatible while old and new run side by side · deploy ≠ release (feature flags) · schema changes: expand, then contract</text>
+
+  <!-- ═══ BAND 3: THE REAL WORLD ═══ -->
+  <rect class="band3" x="40" y="1160" width="1840" height="330" rx="20"/>
+  <text class="bandt" x="70" y="1202" fill="#4f46e5">🗣️ PART 3 — THE REAL WORLD: four dialects, one rulebook (lessons 11–12)</text>
+
+  <rect class="bxi" x="70" y="1230" width="340" height="150" rx="14"/>
+  <text class="t m" x="240" y="1262">⚙️ GitHub Actions</text>
+  <text class="s m" x="240" y="1288">.github/workflows/*.yml</text>
+  <text class="s m" x="240" y="1312">on · jobs · steps · runs-on · strategy.matrix</text>
+  <text class="s m" x="240" y="1336">actions/cache · upload-artifact</text>
+  <text class="s m" x="240" y="1360">environment + required reviewers</text>
+  <rect class="bxi" x="430" y="1230" width="340" height="150" rx="14"/>
+  <text class="t m" x="600" y="1262">🔄 CircleCI</text>
+  <text class="s m" x="600" y="1288">.circleci/config.yml</text>
+  <text class="s m" x="600" y="1312">workflows · jobs · steps · executor · matrix</text>
+  <text class="s m" x="600" y="1336">restore/save_cache · store_test_results</text>
+  <text class="s m" x="600" y="1360">context · type: approval</text>
+  <rect class="bxi" x="790" y="1230" width="340" height="150" rx="14"/>
+  <text class="t m" x="960" y="1262">🦊 GitLab CI</text>
+  <text class="s m" x="960" y="1288">.gitlab-ci.yml</text>
+  <text class="s m" x="960" y="1312">stages · jobs · script · runner · parallel: matrix</text>
+  <text class="s m" x="960" y="1336">cache: key: files · artifacts: reports: junit</text>
+  <text class="s m" x="960" y="1360">environment · when: manual · id_tokens</text>
+  <rect class="bxi" x="1150" y="1230" width="340" height="150" rx="14"/>
+  <text class="t m" x="1320" y="1262">🎩 Jenkins</text>
+  <text class="s m" x="1320" y="1288">Jenkinsfile (declarative)</text>
+  <text class="s m" x="1320" y="1312">pipeline · stages · steps · agent · matrix</text>
+  <text class="s m" x="1320" y="1336">no built-in cache step · junit · archiveArtifacts</text>
+  <text class="s m" x="1320" y="1360">withAWS · input</text>
+  <g transform="translate(70,1230)"><circle r="13" fill="#4f46e5"/><text class="ntb" dy="5">8</text></g>
+  <text class="s m" x="780" y="1420">all four run the SAME three commands — node prepare.js · node --test · docker build &amp; push —</text>
+  <text class="s m" x="780" y="1444">so keep the logic in scripts and the YAML thin; switching vendors becomes a translation, not a rewrite</text>
+
+  <rect class="ind" x="1510" y="1230" width="340" height="230" rx="14"/>
+  <text class="t m" x="1680" y="1262">🧹 the rulebook + the handoff</text>
+  <text class="s m" x="1680" y="1290">pin actions, orbs and images by SHA / digest</text>
+  <text class="s m" x="1680" y="1314">least-privilege permissions · protect main</text>
+  <text class="s m" x="1680" y="1338">quarantine flaky tests · timeouts · concurrency</text>
+  <text class="s m" x="1680" y="1362">📊 DORA: deployment frequency · lead time ·</text>
+  <text class="s m" x="1680" y="1386">change failure rate · time to restore</text>
+  <text class="s m" x="1680" y="1416">🤖 next: ArgoCD PULLS from git, self-heals</text>
+  <text class="s m" x="1680" y="1440">drift — the caretaker robot with the plan book</text>
+  <g transform="translate(1510,1230)"><circle r="13" fill="#4f46e5"/><text class="ntb" dy="5">9</text></g>
+
+  <text class="s m" x="960" y="1530">0️⃣ AWS foundations → 1️⃣ Docker &amp; ECR packs the lunchbox → 2️⃣ Kubernetes runs it → 3️⃣ THIS COURSE checks, copies and delivers it → 4️⃣ ArgoCD keeps the cluster honest</text>
+</svg>

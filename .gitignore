@@ -1,0 +1,4 @@
+node_modules/
+app/prepared/
+app/test-results.xml
+.DS_Store

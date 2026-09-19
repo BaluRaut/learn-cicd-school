@@ -1,0 +1,60 @@
+# 🚚 The delivery van (lessons 08–10): staging first, then a human signs, then production.
+#
+# Called by ship.yml after a successful push, or started by hand (Actions → 🚚 deploy → Run).
+# The "production" environment must be created once in Settings → Environments with
+# "Required reviewers" — THAT checkbox is the approval gate (lesson 08). Nothing here
+# deploys until a named human clicks Approve.
+name: 🚚 deploy
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: full image reference, e.g. 123456789012.dkr.ecr.ap-south-1.amazonaws.com/hello-courier:<sha>
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      image:
+        description: full image reference to deploy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    environment: staging                          # the practice notice board
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with: { role-to-assume: "${{ vars.AWS_ROLE_ARN }}", aws-region: "${{ vars.AWS_REGION }}" }
+      - name: 🔧 point kubectl at the cluster
+        run: aws eks update-kubeconfig --region "${{ vars.AWS_REGION }}" --name "${{ vars.EKS_CLUSTER }}"
+      - name: 📌 pin the new notice (rolling update, lesson 09)
+        run: |
+          sed -i "s|IMAGE_PLACEHOLDER|${{ inputs.image }}|" k8s/deployment.yaml
+          kubectl apply -n staging -f k8s/
+          kubectl rollout status -n staging deployment/hello-courier --timeout=180s
+      - name: 🧪 smoke-test staging from inside the cluster
+        run: kubectl run -n staging smoke --rm -i --restart=Never --image=curlimages/curl -- -fsS http://hello-courier/healthz
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production                       # 🛑 required reviewers = the principal's signature
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with: { role-to-assume: "${{ vars.AWS_ROLE_ARN }}", aws-region: "${{ vars.AWS_REGION }}" }
+      - run: aws eks update-kubeconfig --region "${{ vars.AWS_REGION }}" --name "${{ vars.EKS_CLUSTER }}"
+      - name: 📌 roll it out to the main board
+        run: |
+          sed -i "s|IMAGE_PLACEHOLDER|${{ inputs.image }}|" k8s/deployment.yaml
+          kubectl apply -n production -f k8s/
+          kubectl rollout status -n production deployment/hello-courier --timeout=180s
+      # rollback = kubectl rollout undo deployment/hello-courier -n production   (lesson 09)
+      # …or, better, re-run this workflow with yesterday's image tag: the tag IS the version.
